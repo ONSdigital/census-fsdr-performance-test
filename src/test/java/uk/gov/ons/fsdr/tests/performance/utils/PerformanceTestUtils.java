@@ -72,9 +72,9 @@ public final class PerformanceTestUtils {
     fsdrUtils.ingestAdecco();
   }
 
-  public void setupEmployees(int numberOfEmployees) throws FileNotFoundException {
-    List<Employee> employees = getEmployees();
-    List<Device> devices = getDevices();
+  public void setupEmployees(int numberOfEmployees) throws IOException {
+    List<Employee> employees = getEmployeesFromCsv();
+    List<Device> devices = getDevicesFromCsv();
 
     int count = 0;
     for (int i = 0; i < numberOfEmployees; i++) {
@@ -94,18 +94,16 @@ public final class PerformanceTestUtils {
     mockUtils.addUsersAdecco(adeccoResponseList);
   }
 
-  private List<Device> getDevices() throws FileNotFoundException {
-    File file = new File(
-        getClass().getClassLoader().getResource("files/csv/device_data.csv").getFile());
+  private List<Device> getDevicesFromCsv() throws IOException {
+    File file = new File(getClass().getClassLoader().getResource("files/csv/device_data.csv").getFile());
     return (List<Device>) new CsvToBeanBuilder(new FileReader(file))
         .withType(Employee.class)
         .build()
         .parse();
   }
 
-  private List<Employee> getEmployees() throws FileNotFoundException {
-    File file = new File(
-        getClass().getClassLoader().getResource("files/csv/employee_data.csv").getFile());
+  private List<Employee> getEmployeesFromCsv() throws FileNotFoundException {
+    File file = new File(getClass().getClassLoader().getResource("files/csv/employee_data.csv").getFile());
     return (List<Employee>) new CsvToBeanBuilder(new FileReader(file))
         .withType(Employee.class)
         .build()
