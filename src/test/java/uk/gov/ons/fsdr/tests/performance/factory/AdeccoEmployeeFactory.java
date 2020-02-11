@@ -1,4 +1,4 @@
-package uk.gov.ons.fsdr.tests.performance.utils;
+package uk.gov.ons.fsdr.tests.performance.factory;
 
 import uk.gov.ons.fsdr.common.dto.AdeccoResponse;
 import uk.gov.ons.fsdr.common.dto.AdeccoResponseContact;

@@ -9,6 +9,7 @@ import uk.gov.census.ffa.storage.utils.StorageUtils;
 import uk.gov.ons.fsdr.common.dto.AdeccoResponse;
 import uk.gov.ons.fsdr.tests.performance.dto.Device;
 import uk.gov.ons.fsdr.tests.performance.dto.Employee;
+import uk.gov.ons.fsdr.tests.performance.factory.AdeccoEmployeeFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
