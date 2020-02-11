@@ -1,5 +1,6 @@
 package uk.gov.ons.fsdr.tests.performance.steps;
 
+import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
@@ -33,6 +34,11 @@ public class CreatePerformanceTestSteps {
   @Before
   public void setup() throws IOException {
     mockUtils.clearMock();
+  }
+
+  @After
+  public void cleanUp() {
+    mockUtils.clearDatabase();
   }
 
   @Given("you have {int} FSDRService Pod")
