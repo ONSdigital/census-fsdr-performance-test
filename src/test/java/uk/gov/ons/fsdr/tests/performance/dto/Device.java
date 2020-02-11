@@ -10,13 +10,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Device {
 
-    @CsvBindByName(column = "role_id")
-    private String roleId;
+  @CsvBindByName(column = "role_id")
+  private String roleId;
 
-    @CsvBindByName(column = "field_device_phone_number")
-    private String phoneNumber;
+  @CsvBindByName(column = "field_device_phone_number")
+  private String phoneNumber;
 
-    @CsvBindByName(column = "status")
-    private String status;
+  @CsvBindByName(column = "status")
+  private String status;
 
 }

@@ -13,8 +13,8 @@ Feature: Create action performance test
     And details of latency and cucumber report are saved to files
 
     Examples:
-      |latency  |employees
-      |0        |1000
+      | latency | employees
+      | 0       | 1000
 #      |100      |1000
 #      |500      |1000
 #      |1000     |1000

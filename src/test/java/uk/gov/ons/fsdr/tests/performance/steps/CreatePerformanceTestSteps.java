@@ -16,14 +16,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class CreatePerformanceTestSteps {
 
+  private static final String FSDR_PROCESS_COMPLETE = "FSDR_PROCESS_COMPLETE";
+  private static final String FSDR_REPORT_CREATED = "FSDR_REPORT_CREATED";
   @Autowired
   private PerformanceTestUtils performanceTestUtils;
-
   private GatewayEventMonitor gatewayEventMonitor = new GatewayEventMonitor();
-
-  private static final String FSDR_PROCESS_COMPLETE = "FSDR_PROCESS_COMPLETE";
-
-  private static final String FSDR_REPORT_CREATED = "FSDR_REPORT_CREATED";
 
   @Before
   public void setup() throws IOException {
