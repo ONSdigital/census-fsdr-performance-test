@@ -37,9 +37,6 @@ public final class PerformanceTestUtils {
   private MockUtils mockUtils;
 
   @Autowired
-  private FsdrUtils fsdrUtils;
-
-  @Autowired
   private XmaMockUtils xmaMockUtils;
 
   @Autowired
@@ -69,7 +66,7 @@ public final class PerformanceTestUtils {
   }
 
   public void runFsdr() throws IOException {
-    fsdrUtils.ingestAdecco();
+    mockUtils.ingestAdecco();
   }
 
   public void setupEmployees(int numberOfEmployees) throws IOException {
@@ -92,33 +89,6 @@ public final class PerformanceTestUtils {
     }
     log.info("Employees setup: {}", numberOfEmployees);
     mockUtils.addUsersAdecco(adeccoResponseList);
-  }
-
-  private List<Device> getDevicesFromCsv() throws IOException {
-    File file = new File(getClass().getClassLoader().getResource("files/csv/device_data.csv").getFile());
-    return (List<Device>) new CsvToBeanBuilder(new FileReader(file))
-        .withType(Employee.class)
-        .build()
-        .parse();
-  }
-
-  private List<Employee> getEmployeesFromCsv() throws FileNotFoundException {
-    File file = new File(getClass().getClassLoader().getResource("files/csv/employee_data.csv").getFile());
-    return (List<Employee>) new CsvToBeanBuilder(new FileReader(file))
-        .withType(Employee.class)
-        .build()
-        .parse();
-  }
-
-  private String setJobRole(Device device) {
-    if (device.getRoleId().length() == 10) {
-      return "Field officer";
-    } else if (device.getRoleId().length() == 7) {
-      return "Coordinator";
-    } else if (device.getRoleId().length() == 4) {
-      return "Area Manager";
-    }
-    return null;
   }
 
   public void createLatencyReport(Map<String, String> latencyMap) {
@@ -159,6 +129,39 @@ public final class PerformanceTestUtils {
     storageUtils.move(file.toURI(), URI.create(reportDestination + timestamp + "/"));
     file.deleteOnExit();
     reportUtils.clearReportDatabase();
+  }
+
+  public void clearDown() throws IOException {
+    mockUtils.clearDatabase();
+    mockUtils.clearMock();
+    xmaMockUtils.clearMock();
+  }
+
+  private List<Device> getDevicesFromCsv() throws IOException {
+    File file = new File(getClass().getClassLoader().getResource("files/csv/device_data.csv").getFile());
+    return (List<Device>) new CsvToBeanBuilder(new FileReader(file))
+        .withType(Employee.class)
+        .build()
+        .parse();
+  }
+
+  private List<Employee> getEmployeesFromCsv() throws FileNotFoundException {
+    File file = new File(getClass().getClassLoader().getResource("files/csv/employee_data.csv").getFile());
+    return (List<Employee>) new CsvToBeanBuilder(new FileReader(file))
+        .withType(Employee.class)
+        .build()
+        .parse();
+  }
+
+  private String setJobRole(Device device) {
+    if (device.getRoleId().length() == 10) {
+      return "Field officer";
+    } else if (device.getRoleId().length() == 7) {
+      return "Coordinator";
+    } else if (device.getRoleId().length() == 4) {
+      return "Area Manager";
+    }
+    return null;
   }
 }
 

@@ -7,7 +7,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -34,42 +33,6 @@ public final class XmaMockUtils {
     }
   }
 
-  public String[] getRecords() {
-    RestTemplate restTemplate = new RestTemplate();
-    String url = mockXmaUrl + "messages";
-    log.info("getRecords-mock_url:" + url);
-    ResponseEntity<String[]> responseEntity;
-    responseEntity = restTemplate.getForEntity(url, String[].class);
-    return responseEntity.getBody();
-  }
-
-  public String getId(String roleId) {
-    RestTemplate restTemplate = new RestTemplate();
-    String url = mockXmaUrl + "id";
-    log.info("getId-mock_url:" + url);
-
-    HttpHeaders headers = new HttpHeaders();
-    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
-
-    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
-        .queryParam("roleId", roleId);
-
-    HttpEntity<?> entity = new HttpEntity<>(headers);
-
-    HttpEntity<String> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
-
-    return response.getBody();
-  }
-
-  public String[] getRecords(String email) {
-    RestTemplate restTemplate = new RestTemplate();
-    String url = mockXmaUrl + "messages/" + email;
-    log.info("getRecords-mock_url:" + url);
-    ResponseEntity<String[]> responseEntity;
-    responseEntity = restTemplate.getForEntity(url, String[].class);
-    return responseEntity.getBody();
-  }
-
   public void postDevice(String roleId, String phoneNumber, String status) {
     RestTemplate restTemplate = new RestTemplate();
     String url = mockXmaUrl + "devices/create";
@@ -84,7 +47,6 @@ public final class XmaMockUtils {
         .queryParam("Status", status);
 
     HttpEntity<?> entity = new HttpEntity<>(headers);
-
     restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, HttpStatus.class);
   }
 }

@@ -1,6 +1,5 @@
 package uk.gov.ons.fsdr.tests.performance.steps;
 
-import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
@@ -8,19 +7,14 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.ons.census.fwmt.events.utils.GatewayEventMonitor;
-import uk.gov.ons.fsdr.tests.performance.utils.MockUtils;
 import uk.gov.ons.fsdr.tests.performance.utils.PerformanceTestUtils;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CreatePerformanceTestSteps {
-
-  @Autowired
-  private MockUtils mockUtils;
 
   @Autowired
   private PerformanceTestUtils performanceTestUtils;
@@ -33,12 +27,7 @@ public class CreatePerformanceTestSteps {
 
   @Before
   public void setup() throws IOException {
-    mockUtils.clearMock();
-  }
-
-  @After
-  public void cleanUp() {
-    mockUtils.clearDatabase();
+    performanceTestUtils.clearDown();
   }
 
   @Given("you have {int} FSDRService Pod")
@@ -66,7 +55,7 @@ public class CreatePerformanceTestSteps {
   }
 
   @And("Adecco has sent {string} number of new records")
-  public void adeccoHasSentNumberOfNewRecords(String records) throws FileNotFoundException {
+  public void adeccoHasSentNumberOfNewRecords(String records) throws IOException {
     performanceTestUtils.setupEmployees(Integer.parseInt(records));
   }
 
