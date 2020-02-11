@@ -67,7 +67,7 @@ public final class PerformanceTestUtils {
   }
 
   public void runFsdr() throws IOException {
-    mockUtils.ingestAdecco();
+    mockUtils.startFsdr();
   }
 
   public void setupEmployees(int numberOfEmployees) throws IOException {

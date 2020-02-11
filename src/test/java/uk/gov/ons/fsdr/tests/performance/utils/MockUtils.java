@@ -47,7 +47,7 @@ public final class MockUtils {
   @Value("${spring.datasource.password}")
   private String password;
 
-  public void ingestAdecco() throws IOException {
+  public void startFsdr() throws IOException {
     URL url = new URL(fsdrServiceUrl + "/fsdr/adeccoIngest");
     HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
     createBasicAuthHeaders(fsdrServiceUsername, fsdrServicePassword);
