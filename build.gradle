@@ -70,6 +70,8 @@ dependencies {
 
 	compile("uk.gov.ons.census.fwmt:census-fwmt-events:1.0.17-RELEASE")
 	compile("uk.gov.ons:census-fsdr-common:0.0.4-SNAPSHOT")
+	compile("uk.gov.ons.census.ffa:census-ffa-storage-utils:0.0.1-SNAPSHOT")
+
 
 	compile("com.google.guava:guava:27.0.1-jre")
 
@@ -84,11 +86,7 @@ dependencies {
 	testCompile("org.springframework:spring-aop:${springFrameworkVersion}")
 	testCompile("com.jcraft:jsch:0.1.54")
 
-	testCompile ("org.bouncycastle:bcpg-jdk15on:1.61")
-
-
 	compile("org.json:json:20180813")
-	compile('org.freemarker:freemarker:2.3.28')
 
 	testCompile("com.fasterxml.jackson.core:jackson-databind:2.9.7")
 	testCompile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.7")
@@ -104,4 +102,7 @@ dependencies {
 
 	testCompile("org.projectlombok:lombok:1.18.4")
 	testAnnotationProcessor("org.projectlombok:lombok:1.18.4")
+
+	testCompile("com.opencsv:opencsv:5.0")
+
 }
