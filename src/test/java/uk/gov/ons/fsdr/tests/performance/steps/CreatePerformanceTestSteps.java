@@ -26,7 +26,7 @@ public class CreatePerformanceTestSteps {
 
   private GatewayEventMonitor gatewayEventMonitor = new GatewayEventMonitor();
 
-  private final static String FSDR_PROCESS_COMPLETE = "FSDR_PROCESS_COMPLETE";
+  private static final String FSDR_PROCESS_COMPLETE = "FSDR_PROCESS_COMPLETE";
 
   private static final String FSDR_REPORT_CREATED = "FSDR_REPORT_CREATED";
 
