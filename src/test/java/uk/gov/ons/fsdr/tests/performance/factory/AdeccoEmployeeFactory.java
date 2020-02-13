@@ -8,7 +8,6 @@ import uk.gov.ons.fsdr.tests.performance.dto.Employee;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.UUID;
 
 public class AdeccoEmployeeFactory {
 
@@ -18,7 +17,7 @@ public class AdeccoEmployeeFactory {
         .roleId(employee.getRoleId())
         .build();
     AdeccoResponseContact contact = AdeccoResponseContact.builder()
-        .employeeId(String.valueOf(UUID.randomUUID()))
+        .employeeId(employee.getUniqueEmployeeId())
         .firstName(employee.getFirstName())
         .lastName(employee.getSurname())
         .welshLanguageSpeaker(String.valueOf(employee.getWelshLanguageSpeaker()))
@@ -47,6 +46,7 @@ public class AdeccoEmployeeFactory {
         .responseContact(contact)
         .adeccoResponseWorker(worker)
         .responseJob(job)
+        .status("")
         .build();
   }
 }

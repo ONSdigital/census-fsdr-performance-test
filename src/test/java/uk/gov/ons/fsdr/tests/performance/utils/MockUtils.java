@@ -7,6 +7,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.ons.fsdr.common.dto.AdeccoResponse;
@@ -47,17 +48,12 @@ public final class MockUtils {
   @Value("${spring.datasource.password}")
   private String password;
 
-  public void startFsdr() throws IOException {
-    URL url = new URL(fsdrServiceUrl + "/fsdr/adeccoIngest");
-    HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-    createBasicAuthHeaders(fsdrServiceUsername, fsdrServicePassword);
-
-    httpURLConnection.setRequestMethod("POST");
-    if (httpURLConnection.getResponseCode() != 200) {
-      log.error("failed to initiate Adecco ingest" + httpURLConnection.getResponseCode()
-          + httpURLConnection.getResponseMessage());
-      throw new RuntimeException(httpURLConnection.getResponseMessage());
-    }
+  public void startFsdr() {
+    String url = fsdrServiceUrl + "/fsdr/adeccoIngest";
+    RestTemplate restTemplate = new RestTemplate();
+    HttpHeaders headers = createBasicAuthHeaders(fsdrServiceUsername, fsdrServicePassword);
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
   }
 
   public void clearMock() throws IOException {

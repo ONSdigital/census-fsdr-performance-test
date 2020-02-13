@@ -25,6 +25,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -33,6 +34,8 @@ public final class PerformanceTestUtils {
   public static AdeccoResponse adeccoResponse = new AdeccoResponse();
 
   public static List<AdeccoResponse> adeccoResponseList = new ArrayList<>();
+
+  public static List<Device> allocatedDevices = new ArrayList<>();
 
   @Autowired
   private MockUtils mockUtils;
@@ -66,7 +69,7 @@ public final class PerformanceTestUtils {
     return latencyMap;
   }
 
-  public void runFsdr() throws IOException {
+  public void runFsdr() {
     mockUtils.startFsdr();
   }
 
@@ -78,11 +81,12 @@ public final class PerformanceTestUtils {
     for (int i = 0; i < numberOfEmployees; i++) {
       Device device = devices.get(count);
       Employee employee = employees.get(count);
+      employee.setUniqueEmployeeId(String.valueOf(UUID.randomUUID()));
       employee.setRoleId(device.getRoleId());
       employee.setJobRole(setJobRole(device));
       adeccoResponse = AdeccoEmployeeFactory.buildAdeccoResponse(employee);
       adeccoResponseList.add(adeccoResponse);
-      xmaMockUtils.postDevice(device.getRoleId(), device.getPhoneNumber(), device.getStatus());
+      allocatedDevices.add(device);
       count++;
       if (count == employees.size()) {
         count = 0;
@@ -90,6 +94,13 @@ public final class PerformanceTestUtils {
     }
     log.info("Employees setup: {}", numberOfEmployees);
     mockUtils.addUsersAdecco(adeccoResponseList);
+  }
+
+  public void createDevices() {
+    for (Device device: allocatedDevices) {
+      xmaMockUtils.postDevice(device.getRoleId(), device.getPhoneNumber(), device.getStatus());
+    }
+    log.info("Devices added to XMA: {}", allocatedDevices.size());
   }
 
   public void createLatencyReport(Map<String, String> latencyMap) {
@@ -141,7 +152,7 @@ public final class PerformanceTestUtils {
   private List<Device> getDevicesFromCsv() throws IOException {
     File file = new File(getClass().getClassLoader().getResource("files/csv/device_data.csv").getFile());
     return (List<Device>) new CsvToBeanBuilder(new FileReader(file))
-        .withType(Employee.class)
+        .withType(Device.class)
         .build()
         .parse();
   }
