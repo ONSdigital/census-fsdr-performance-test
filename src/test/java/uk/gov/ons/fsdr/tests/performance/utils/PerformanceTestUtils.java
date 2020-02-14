@@ -73,6 +73,16 @@ public final class PerformanceTestUtils {
     mockUtils.startFsdr();
   }
 
+  public void setTimestamp() {
+    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyMMddHmmss");
+    LocalDateTime now = LocalDateTime.now();
+    timestamp = dateTimeFormatter.format(now);
+  }
+
+  public String getTimestamp() {
+    return timestamp;
+  }
+
   public void setupEmployees(int numberOfEmployees) throws IOException {
     List<Employee> employees = getEmployeesFromCsv();
     List<Device> devices = getDevicesFromCsv();
@@ -104,12 +114,9 @@ public final class PerformanceTestUtils {
   }
 
   public void createLatencyReport(Map<String, String> latencyMap) {
-    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyMMddHmmss");
-    LocalDateTime now = LocalDateTime.now();
-    timestamp = dateTimeFormatter.format(now);
     File file = null;
     try {
-      file = File.createTempFile("latency_report-" + timestamp, ".txt");
+      file = File.createTempFile("latency_report-" + getTimestamp(), ".txt");
     } catch (IOException ignored) {
     }
     try (Writer writer = new FileWriter(file.getAbsolutePath(), StandardCharsets.UTF_8)) {
@@ -120,25 +127,25 @@ public final class PerformanceTestUtils {
       writer.write("XMA latency: " + latencyMap.get("xma") + "ms");
     } catch (IOException ignored) {
     }
-    storageUtils.move(file.toURI(), URI.create(reportDestination + timestamp + "/"));
+    storageUtils.move(file.toURI(), URI.create(reportDestination + "/" + getTimestamp() + "/" + file.getName()));
     file.deleteOnExit();
   }
 
   public void createCucumberReports() {
-    List<URI> cucumberReportFileList = storageUtils.getFilenamesInFolder(URI.create("target/cucumber-reports"));
+    List<URI> cucumberReportFileList = storageUtils.getFilenamesInFolder(URI.create("files/report"));
     for (URI uri : cucumberReportFileList) {
-      storageUtils.move(uri, URI.create(reportDestination + timestamp + "/"));
+      storageUtils.move(uri, URI.create(reportDestination + getTimestamp() + "/"));
     }
   }
 
   public void createFsdrReport() throws IOException {
     byte[] csv = reportUtils.createCsv();
-    File file = File.createTempFile("fsdr_report-" + timestamp, ".csv");
+    File file = File.createTempFile("fsdr_report-" + getTimestamp(), ".csv");
     try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
       fileOutputStream.write(csv);
     } catch (IOException ignored) {
     }
-    storageUtils.move(file.toURI(), URI.create(reportDestination + timestamp + "/"));
+    storageUtils.move(file.toURI(), URI.create(reportDestination + "/" + getTimestamp() + "/" + file.getName()));
     file.deleteOnExit();
     reportUtils.clearReportDatabase();
   }

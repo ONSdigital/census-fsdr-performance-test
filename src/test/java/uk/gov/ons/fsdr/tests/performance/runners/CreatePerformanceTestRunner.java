@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @RunWith(Cucumber.class)
-@CucumberOptions(plugin = {"pretty", "html:target/cucumber-reports"},
+@CucumberOptions(plugin = {"pretty", "html:files/report"},
     features = {"src/test/resources/acceptancetests/createPerformance.feature"},
     glue = {"uk.gov.ons.fsdr.tests.performance.steps"})
 @Configuration

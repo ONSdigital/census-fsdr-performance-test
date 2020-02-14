@@ -2,6 +2,7 @@ package uk.gov.ons.fsdr.tests.performance.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -23,7 +24,7 @@ public final class ReportUtils {
     String url = reportBaseUrl + "csv";
     log.info("getCsv-report_url:" + url);
     ResponseEntity<byte[]> responseEntity;
-    responseEntity = restTemplate.getForEntity(url, byte[].class);
+    responseEntity = restTemplate.exchange(url, HttpMethod.GET, null, byte[].class);
     return responseEntity.getBody();
   }
 
