@@ -120,11 +120,11 @@ public final class PerformanceTestUtils {
     } catch (IOException ignored) {
     }
     try (Writer writer = new FileWriter(file.getAbsolutePath(), StandardCharsets.UTF_8)) {
-      writer.write("Latency Report");
-      writer.write("Adecco latency: " + latencyMap.get("adecco") + "ms");
-      writer.write("Service Now latency: " + latencyMap.get("snow") + "ms");
-      writer.write("G Suite latency: " + latencyMap.get("gsuite") + "ms");
-      writer.write("XMA latency: " + latencyMap.get("xma") + "ms");
+      writer.write("Latency Report \n");
+      writer.write("Adecco latency: " + latencyMap.get("adecco") + "ms \n");
+      writer.write("Service Now latency: " + latencyMap.get("snow") + "ms \n");
+      writer.write("G Suite latency: " + latencyMap.get("gsuite") + "ms \n");
+      writer.write("XMA latency: " + latencyMap.get("xma") + "ms \n");
     } catch (IOException ignored) {
     }
     storageUtils.move(file.toURI(), URI.create(reportDestination + "/" + getTimestamp() + "/" + file.getName()));
