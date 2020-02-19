@@ -68,10 +68,12 @@ dependencies {
 	compile ("org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}")
 	runtimeOnly 'org.postgresql:postgresql:42.2.5'
 
-	compile("uk.gov.ons.census.fwmt:census-fwmt-events:1.0.17-RELEASE")
+	compile("uk.gov.ons.census.fwmt:census-fwmt-events:1.0.19-RELEASE")
 	compile("uk.gov.ons:census-fsdr-common:0.0.4-RELEASE")
 	compile("uk.gov.ons.census.ffa:census-ffa-storage-utils:0.0.1-RELEASE")
 
+	compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
+	testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
 	compile("com.google.guava:guava:27.0.1-jre")
 
@@ -104,5 +106,6 @@ dependencies {
 	testAnnotationProcessor("org.projectlombok:lombok:1.18.4")
 
 	testCompile("com.opencsv:opencsv:5.0")
+	compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
 
 }

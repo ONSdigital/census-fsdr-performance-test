@@ -1,6 +1,5 @@
 package uk.gov.ons.fsdr.tests.performance.steps;
 
-import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
@@ -66,11 +65,10 @@ public class CreatePerformanceTestSteps {
   }
 
   @When("confirm FSDR runs and has completed")
-  public void confirmFsdrRunsAndHasCompleted() {
+  public void confirmFsdrRunsAndHasCompleted() throws InterruptedException {
     performanceTestUtils.runFsdr();
-//    performanceTestUtils.createDevices();
-//    boolean fsdrProcessCompleteHasBeenTriggered = gatewayEventMonitor.hasEventTriggered("N/A", FSDR_PROCESS_COMPLETE, 60000L);
-//    assertThat(fsdrProcessCompleteHasBeenTriggered).isTrue();
+    boolean fsdrProcessCompleteHasBeenTriggered = gatewayEventMonitor.hasEventTriggered("<N/A>", FSDR_PROCESS_COMPLETE, 10000L);
+    assertThat(fsdrProcessCompleteHasBeenTriggered).isTrue();
   }
 
   @Then("confirm that an FSDR report has been created")
