@@ -136,6 +136,7 @@ public final class PerformanceTestUtils {
     }
     try (Writer writer = new FileWriter(file.getAbsolutePath(), StandardCharsets.UTF_8)) {
       writer.write("Latency Report \n");
+      writer.write(adeccoResponseList.size() + " : Number of Adecco responses \n");
       writer.write("Adecco latency: " + latencyMap.get("adecco") + "ms \n");
       writer.write("Service Now latency: " + latencyMap.get("snow") + "ms \n");
       writer.write("G Suite latency: " + latencyMap.get("gsuite") + "ms \n");
