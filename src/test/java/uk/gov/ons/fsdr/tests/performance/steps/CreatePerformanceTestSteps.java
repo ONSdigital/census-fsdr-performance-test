@@ -25,6 +25,8 @@ public class CreatePerformanceTestSteps {
 
   private GatewayEventMonitor gatewayEventMonitor = new GatewayEventMonitor();
 
+  long timeout;
+
   @Before
   public void setup() throws IOException, TimeoutException {
     gatewayEventMonitor.enableEventMonitor();
@@ -63,13 +65,14 @@ public class CreatePerformanceTestSteps {
 
   @And("Adecco has sent {string} number of new records")
   public void adeccoHasSentNumberOfNewRecords(String records) throws IOException {
+    timeout = Integer.parseInt(records) * 10000;
     performanceTestUtils.setupEmployees(Integer.parseInt(records));
   }
 
   @When("confirm FSDR runs and has completed")
   public void confirmFsdrRunsAndHasCompleted() {
     performanceTestUtils.runFsdr();
-    boolean fsdrProcessCompleteHasBeenTriggered = gatewayEventMonitor.hasEventTriggered("<N/A>", FSDR_PROCESS_COMPLETE, 1000000L);
+    boolean fsdrProcessCompleteHasBeenTriggered = gatewayEventMonitor.hasEventTriggered("<N/A>", FSDR_PROCESS_COMPLETE, timeout);
     assertThat(fsdrProcessCompleteHasBeenTriggered).isTrue();
   }
 
