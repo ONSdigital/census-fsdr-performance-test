@@ -19,7 +19,7 @@ plugins {
 
 description = 'census-fsdr-performance-tests'
 group = 'uk.gov.ons.fsdr.tests'
-version = '0.0.1-SNAPSHOT'
+version = rootProject.file('version.txt').text.trim()
 sourceCompatibility = 11
 targetCompatibility = 11
 
