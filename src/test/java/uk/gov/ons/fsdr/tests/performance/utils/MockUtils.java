@@ -49,11 +49,14 @@ public final class MockUtils {
   private String password;
 
   public void startFsdr() {
-    String url = fsdrServiceUrl + "/fsdr/adeccoIngest";
+    String url = fsdrServiceUrl + "/fsdr/startFsdr";
     RestTemplate restTemplate = new RestTemplate();
     HttpHeaders headers = createBasicAuthHeaders(fsdrServiceUsername, fsdrServicePassword);
     headers.setContentType(MediaType.APPLICATION_JSON);
     ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+    if (responseEntity.getStatusCodeValue() != 200) {
+      throw new MockInaccessibleException("Failed : HTTP error code : " + responseEntity.getStatusCodeValue());
+    }
   }
 
   public void clearMock() throws IOException {
