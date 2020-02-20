@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.census.ffa.storage.utils.StorageUtils;
-import uk.gov.ons.census.fwmt.events.component.GatewayEventManager;
 import uk.gov.ons.fsdr.common.dto.AdeccoResponse;
 import uk.gov.ons.fsdr.tests.performance.dto.Device;
 import uk.gov.ons.fsdr.tests.performance.dto.Employee;
@@ -32,14 +31,15 @@ import java.util.UUID;
 @Component
 public final class PerformanceTestUtils {
 
-  public static AdeccoResponse adeccoResponse = new AdeccoResponse();
+  private static List<AdeccoResponse> adeccoResponseList = new ArrayList<>();
 
-  public static List<AdeccoResponse> adeccoResponseList = new ArrayList<>();
-
-  public static List<Device> allocatedDevices = new ArrayList<>();
+  private static List<Device> allocatedDevices = new ArrayList<>();
 
   @Autowired
   private MockUtils mockUtils;
+
+  @Autowired
+  private FsdrUtils fsdrUtils;
 
   @Autowired
   private XmaMockUtils xmaMockUtils;
@@ -59,8 +59,6 @@ public final class PerformanceTestUtils {
   private Map<String, String> latencyMap;
 
   private String timestamp;
-
-  public static String FSDR_REPORT_COMPLETE = "FSDR_REPORT_COMPLETE";
 
   public PerformanceTestUtils(Map<String, String> latencyMap) {
     this.latencyMap = latencyMap;
@@ -83,11 +81,11 @@ public final class PerformanceTestUtils {
   }
 
   public void stopScheduler() {
-    mockUtils.stopScheduler();
+    fsdrUtils.stopScheduler();
   }
 
   public void runFsdr() {
-    mockUtils.startFsdr();
+    fsdrUtils.startFsdr();
   }
 
   public void setTimestamp() {
@@ -111,7 +109,7 @@ public final class PerformanceTestUtils {
       employee.setUniqueEmployeeId(String.valueOf(UUID.randomUUID()));
       employee.setRoleId(device.getRoleId());
       employee.setJobRole(setJobRole(device));
-      adeccoResponse = AdeccoEmployeeFactory.buildAdeccoResponse(employee);
+      AdeccoResponse adeccoResponse = AdeccoEmployeeFactory.buildAdeccoResponse(employee);
       adeccoResponseList.add(adeccoResponse);
       allocatedDevices.add(device);
       count++;

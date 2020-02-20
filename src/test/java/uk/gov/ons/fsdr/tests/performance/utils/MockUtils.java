@@ -7,7 +7,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.ons.fsdr.common.dto.AdeccoResponse;
@@ -30,14 +29,11 @@ public final class MockUtils {
   @Value("${mock.baseUrl}")
   private String baseMockUrl;
 
-  @Value("${service.fsdrservice.url}")
-  private String fsdrServiceUrl;
-
   @Value("${service.fsdrservice.username}")
-  private String fsdrServiceUsername;
+  private String mockUsername;
 
   @Value("${service.fsdrservice.password}")
-  private String fsdrServicePassword;
+  private String mockPassword;
 
   @Value("${spring.datasource.url}")
   private String url;
@@ -47,28 +43,6 @@ public final class MockUtils {
 
   @Value("${spring.datasource.password}")
   private String password;
-
-  public void startFsdr() {
-    String url = fsdrServiceUrl + "/fsdr/startFsdr";
-    RestTemplate restTemplate = new RestTemplate();
-    HttpHeaders headers = createBasicAuthHeaders(fsdrServiceUsername, fsdrServicePassword);
-    headers.setContentType(MediaType.APPLICATION_JSON);
-    ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
-    if (responseEntity.getStatusCodeValue() != 200) {
-      throw new MockInaccessibleException("Failed : HTTP error code : " + responseEntity.getStatusCodeValue());
-    }
-  }
-
-  public void stopScheduler() {
-    String url = fsdrServiceUrl + "/fsdr/disableScheduler";
-    RestTemplate restTemplate = new RestTemplate();
-    HttpHeaders headers = createBasicAuthHeaders(fsdrServiceUsername, fsdrServicePassword);
-    headers.setContentType(MediaType.APPLICATION_JSON);
-    ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
-    if (responseEntity.getStatusCodeValue() != 200) {
-      throw new MockInaccessibleException("Failed : HTTP error code : " + responseEntity.getStatusCodeValue());
-    }
-  }
 
   public void clearMock() throws IOException {
     URL url = new URL(baseMockUrl + "mock/reset");
@@ -128,7 +102,7 @@ public final class MockUtils {
 
   public void addUsersAdecco(List<AdeccoResponse> adeccoResponseList) {
     RestTemplate restTemplate = new RestTemplate();
-    HttpHeaders headers = createBasicAuthHeaders(fsdrServiceUsername, fsdrServicePassword);
+    HttpHeaders headers = createBasicAuthHeaders(mockUsername, mockPassword);
     headers.setContentType(MediaType.APPLICATION_JSON);
     HttpEntity<List<AdeccoResponse>> response = new HttpEntity<>(adeccoResponseList, headers);
     String postUrl = baseMockUrl + "mock/postResponse";
