@@ -1,5 +1,6 @@
 package uk.gov.ons.fsdr.tests.performance.steps;
 
+import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
@@ -19,10 +20,6 @@ public class CreatePerformanceTestSteps {
 
   private static final String FSDR_PROCESS_COMPLETE = "FSDR_PROCESS_COMPLETE";
 
-  private static final String FSDR_REPORT_CREATED = "FSDR_REPORT_CREATED";
-
-  private static final String XMA_PROCESSING_COMPLETE = "XMA_PROCESSING_COMPLETE";
-
   @Autowired
   private PerformanceTestUtils performanceTestUtils;
 
@@ -33,6 +30,11 @@ public class CreatePerformanceTestSteps {
     gatewayEventMonitor.enableEventMonitor();
     performanceTestUtils.clearDown();
     performanceTestUtils.setTimestamp();
+  }
+
+  @After
+  public void stop() {
+    performanceTestUtils.stopScheduler();
   }
 
   @Given("you have {int} FSDRService Pod")
@@ -65,17 +67,16 @@ public class CreatePerformanceTestSteps {
   }
 
   @When("confirm FSDR runs and has completed")
-  public void confirmFsdrRunsAndHasCompleted() throws InterruptedException {
+  public void confirmFsdrRunsAndHasCompleted() {
     performanceTestUtils.runFsdr();
-    boolean fsdrProcessCompleteHasBeenTriggered = gatewayEventMonitor.hasEventTriggered("<N/A>", FSDR_PROCESS_COMPLETE, 10000L);
+    boolean fsdrProcessCompleteHasBeenTriggered = gatewayEventMonitor.hasEventTriggered("<N/A>", FSDR_PROCESS_COMPLETE, 1000000L);
     assertThat(fsdrProcessCompleteHasBeenTriggered).isTrue();
   }
 
   @Then("confirm that an FSDR report has been created")
   public void confirmThatAnFsdrReportHasBeenCreated() throws IOException {
-    performanceTestUtils.createFsdrReport();
-    boolean hasBeenTriggered = gatewayEventMonitor.hasEventTriggered("N/A", FSDR_REPORT_CREATED, 10000L);
-    assertThat(hasBeenTriggered).isTrue();
+    Boolean hasFileCreated = performanceTestUtils.createFsdrReport();
+    assertThat(hasFileCreated).isTrue();
   }
 
   @And("details of latency and cucumber report are saved to files")

@@ -59,6 +59,17 @@ public final class MockUtils {
     }
   }
 
+  public void stopScheduler() {
+    String url = fsdrServiceUrl + "/fsdr/disableScheduler";
+    RestTemplate restTemplate = new RestTemplate();
+    HttpHeaders headers = createBasicAuthHeaders(fsdrServiceUsername, fsdrServicePassword);
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+    if (responseEntity.getStatusCodeValue() != 200) {
+      throw new MockInaccessibleException("Failed : HTTP error code : " + responseEntity.getStatusCodeValue());
+    }
+  }
+
   public void clearMock() throws IOException {
     URL url = new URL(baseMockUrl + "mock/reset");
     log.info("clear-mock_url:" + url.toString());

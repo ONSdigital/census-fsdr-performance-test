@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.census.ffa.storage.utils.StorageUtils;
+import uk.gov.ons.census.fwmt.events.component.GatewayEventManager;
 import uk.gov.ons.fsdr.common.dto.AdeccoResponse;
 import uk.gov.ons.fsdr.tests.performance.dto.Device;
 import uk.gov.ons.fsdr.tests.performance.dto.Employee;
@@ -49,12 +50,17 @@ public final class PerformanceTestUtils {
   @Autowired
   private StorageUtils storageUtils;
 
+  @Autowired
+  private QueueClient queueClient;
+
   @Value("${output.directory}")
   private URI reportDestination;
 
   private Map<String, String> latencyMap;
 
   private String timestamp;
+
+  public static String FSDR_REPORT_COMPLETE = "FSDR_REPORT_COMPLETE";
 
   public PerformanceTestUtils(Map<String, String> latencyMap) {
     this.latencyMap = latencyMap;
@@ -67,6 +73,17 @@ public final class PerformanceTestUtils {
 
   public Map<String, String> getLatencyMap() {
     return latencyMap;
+  }
+
+  public void clearDown() throws IOException {
+    mockUtils.clearDatabase();
+    mockUtils.clearMock();
+    queueClient.clearQueues();
+    xmaMockUtils.clearMock();
+  }
+
+  public void stopScheduler() {
+    mockUtils.stopScheduler();
   }
 
   public void runFsdr() {
@@ -138,22 +155,18 @@ public final class PerformanceTestUtils {
     }
   }
 
-  public void createFsdrReport() throws IOException {
+  public boolean createFsdrReport() throws IOException {
     byte[] csv = reportUtils.createCsv();
     File file = File.createTempFile("fsdr_report-" + getTimestamp(), ".csv");
     try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
       fileOutputStream.write(csv);
     } catch (IOException ignored) {
+      return false;
     }
     storageUtils.move(file.toURI(), URI.create(reportDestination + "/" + getTimestamp() + "/" + file.getName()));
     file.deleteOnExit();
     reportUtils.clearReportDatabase();
-  }
-
-  public void clearDown() throws IOException {
-    mockUtils.clearDatabase();
-    mockUtils.clearMock();
-    xmaMockUtils.clearMock();
+    return true;
   }
 
   private List<Device> getDevicesFromCsv() throws IOException {

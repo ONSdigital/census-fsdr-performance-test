@@ -14,6 +14,6 @@ Feature: Create action performance test
 
     Examples:
       |xmaLatency| adeccoLatency | gsuiteLatency | snowLatency | employees |
-      |      0   |      0        |        0      |      0      |    100    |
-      |     10   |     10        |       10      |     10      |    500    |
-#      |          |               |               |             |           |
+      |     0    |     0         |        0      |      0      |    500      |
+#      |     0    |     0         |        0      |      0      |    50     |
+#      |     0    |     0         |        0      |      0      |    500    |
