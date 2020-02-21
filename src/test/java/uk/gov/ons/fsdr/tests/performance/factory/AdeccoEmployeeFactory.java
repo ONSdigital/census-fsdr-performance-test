@@ -46,7 +46,8 @@ public class AdeccoEmployeeFactory {
         .responseContact(contact)
         .adeccoResponseWorker(worker)
         .responseJob(job)
-        .status("")
+        .status("ASSIGNED")
+        .crStatus("ACTIVE")
         .build();
   }
 }

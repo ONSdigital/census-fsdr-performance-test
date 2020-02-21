@@ -31,14 +31,15 @@ import java.util.UUID;
 @Component
 public final class PerformanceTestUtils {
 
-  public static AdeccoResponse adeccoResponse = new AdeccoResponse();
+  private static List<AdeccoResponse> adeccoResponseList = new ArrayList<>();
 
-  public static List<AdeccoResponse> adeccoResponseList = new ArrayList<>();
-
-  public static List<Device> allocatedDevices = new ArrayList<>();
+  private static List<Device> allocatedDevices = new ArrayList<>();
 
   @Autowired
   private MockUtils mockUtils;
+
+  @Autowired
+  private FsdrUtils fsdrUtils;
 
   @Autowired
   private XmaMockUtils xmaMockUtils;
@@ -48,6 +49,9 @@ public final class PerformanceTestUtils {
 
   @Autowired
   private StorageUtils storageUtils;
+
+  @Autowired
+  private QueueClient queueClient;
 
   @Value("${output.directory}")
   private URI reportDestination;
@@ -69,8 +73,19 @@ public final class PerformanceTestUtils {
     return latencyMap;
   }
 
+  public void clearDown() throws IOException {
+    mockUtils.clearDatabase();
+    mockUtils.clearMock();
+    queueClient.clearQueues();
+    xmaMockUtils.clearMock();
+  }
+
+  public void stopScheduler() {
+    fsdrUtils.stopScheduler();
+  }
+
   public void runFsdr() {
-    mockUtils.startFsdr();
+    fsdrUtils.startFsdr();
   }
 
   public void setTimestamp() {
@@ -94,7 +109,7 @@ public final class PerformanceTestUtils {
       employee.setUniqueEmployeeId(String.valueOf(UUID.randomUUID()));
       employee.setRoleId(device.getRoleId());
       employee.setJobRole(setJobRole(device));
-      adeccoResponse = AdeccoEmployeeFactory.buildAdeccoResponse(employee);
+      AdeccoResponse adeccoResponse = AdeccoEmployeeFactory.buildAdeccoResponse(employee);
       adeccoResponseList.add(adeccoResponse);
       allocatedDevices.add(device);
       count++;
@@ -121,6 +136,7 @@ public final class PerformanceTestUtils {
     }
     try (Writer writer = new FileWriter(file.getAbsolutePath(), StandardCharsets.UTF_8)) {
       writer.write("Latency Report \n");
+      writer.write(adeccoResponseList.size() + " : Number of Adecco responses \n");
       writer.write("Adecco latency: " + latencyMap.get("adecco") + "ms \n");
       writer.write("Service Now latency: " + latencyMap.get("snow") + "ms \n");
       writer.write("G Suite latency: " + latencyMap.get("gsuite") + "ms \n");
@@ -138,22 +154,18 @@ public final class PerformanceTestUtils {
     }
   }
 
-  public void createFsdrReport() throws IOException {
+  public boolean createFsdrReport() throws IOException {
     byte[] csv = reportUtils.createCsv();
     File file = File.createTempFile("fsdr_report-" + getTimestamp(), ".csv");
     try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
       fileOutputStream.write(csv);
     } catch (IOException ignored) {
+      return false;
     }
     storageUtils.move(file.toURI(), URI.create(reportDestination + "/" + getTimestamp() + "/" + file.getName()));
     file.deleteOnExit();
     reportUtils.clearReportDatabase();
-  }
-
-  public void clearDown() throws IOException {
-    mockUtils.clearDatabase();
-    mockUtils.clearMock();
-    xmaMockUtils.clearMock();
+    return true;
   }
 
   private List<Device> getDevicesFromCsv() throws IOException {
