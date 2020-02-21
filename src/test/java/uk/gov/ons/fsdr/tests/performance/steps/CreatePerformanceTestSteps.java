@@ -1,20 +1,23 @@
 package uk.gov.ons.fsdr.tests.performance.steps;
 
-import cucumber.api.java.After;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeoutException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+
 import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.ons.census.fwmt.events.utils.GatewayEventMonitor;
 import uk.gov.ons.fsdr.tests.performance.utils.PerformanceTestUtils;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.TimeoutException;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class CreatePerformanceTestSteps {
 
@@ -22,7 +25,18 @@ public class CreatePerformanceTestSteps {
 
   private static final String FSDR_REPORT_CREATED = "FSDR_REPORT_CREATED";
 
-  private static final String XMA_PROCESSING_COMPLETE = "XMA_PROCESSING_COMPLETE";
+
+  @Value("${service.rabbit.url}")
+  private String rabbitLocation;
+
+  @Value("${service.rabbit.port}")
+  private int rabbitPort;
+
+  @Value("${service.rabbit.username}")
+  private String rabbitUsername;
+
+  @Value("${service.rabbit.password}")
+  private String rabbitPassword;
 
   @Autowired
   private PerformanceTestUtils performanceTestUtils;
@@ -31,7 +45,8 @@ public class CreatePerformanceTestSteps {
 
   @Before
   public void setup() throws IOException, TimeoutException {
-    gatewayEventMonitor.enableEventMonitor();
+    List<String> eventsToListen = Arrays.asList(new String[]{FSDR_PROCESS_COMPLETE, FSDR_REPORT_CREATED});
+    gatewayEventMonitor.enableEventMonitor(rabbitLocation, rabbitUsername, rabbitPassword, rabbitPort, eventsToListen);
     performanceTestUtils.clearDown();
     performanceTestUtils.setTimestamp();
   }
@@ -69,8 +84,8 @@ public class CreatePerformanceTestSteps {
   public void confirmFsdrRunsAndHasCompleted() {
     performanceTestUtils.runFsdr();
 //    performanceTestUtils.createDevices();
-//    boolean fsdrProcessCompleteHasBeenTriggered = gatewayEventMonitor.hasEventTriggered("N/A", FSDR_PROCESS_COMPLETE, 60000L);
-//    assertThat(fsdrProcessCompleteHasBeenTriggered).isTrue();
+    boolean fsdrProcessCompleteHasBeenTriggered = gatewayEventMonitor.hasEventTriggered("N/A", FSDR_PROCESS_COMPLETE, 60000L);
+    assertThat(fsdrProcessCompleteHasBeenTriggered).isTrue();
   }
 
   @Then("confirm that an FSDR report has been created")
