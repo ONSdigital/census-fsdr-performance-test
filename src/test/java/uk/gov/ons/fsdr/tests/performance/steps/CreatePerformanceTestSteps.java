@@ -8,6 +8,7 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.ons.census.fwmt.events.utils.GatewayEventMonitor;
+import uk.gov.ons.fsdr.tests.performance.utils.MockUtils;
 import uk.gov.ons.fsdr.tests.performance.utils.PerformanceTestUtils;
 
 import java.io.IOException;
@@ -26,6 +27,9 @@ public class CreatePerformanceTestSteps {
 
   @Autowired
   private PerformanceTestUtils performanceTestUtils;
+
+  @Autowired
+  private MockUtils mockUtils;
 
   private GatewayEventMonitor gatewayEventMonitor = new GatewayEventMonitor();
 
@@ -62,15 +66,16 @@ public class CreatePerformanceTestSteps {
 
   @And("Adecco has sent {string} number of new records")
   public void adeccoHasSentNumberOfNewRecords(String records) throws IOException {
-    performanceTestUtils.setupEmployees(Integer.parseInt(records));
+    mockUtils.addMultipleAdecco(Integer.parseInt(records));
+    //performanceTestUtils.setupEmployees(Integer.parseInt(records));
   }
 
   @When("confirm FSDR runs and has completed")
   public void confirmFsdrRunsAndHasCompleted() {
     performanceTestUtils.runFsdr();
-//    performanceTestUtils.createDevices();
-//    boolean fsdrProcessCompleteHasBeenTriggered = gatewayEventMonitor.hasEventTriggered("N/A", FSDR_PROCESS_COMPLETE, 60000L);
-//    assertThat(fsdrProcessCompleteHasBeenTriggered).isTrue();
+   // performanceTestUtils.createDevices();
+    boolean fsdrProcessCompleteHasBeenTriggered = gatewayEventMonitor.hasEventTriggered("<N/A>", FSDR_PROCESS_COMPLETE, 180000L);
+    assertThat(fsdrProcessCompleteHasBeenTriggered).isTrue();
   }
 
   @Then("confirm that an FSDR report has been created")

@@ -121,6 +121,14 @@ public final class MockUtils {
     restTemplate.exchange(postUrl, HttpMethod.POST, response, AdeccoResponseList.class);
   }
 
+  public void addMultipleAdecco(int number) {
+    String url = baseMockUrl + "mock/postManyResponse/" + number;
+    RestTemplate restTemplate = new RestTemplate();
+    HttpHeaders headers = createBasicAuthHeaders("user", "password");
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    restTemplate.exchange(url, HttpMethod.POST, null, String.class);
+  }
+
   private HttpHeaders createBasicAuthHeaders(String username, String password) {
     HttpHeaders headers = new HttpHeaders();
     final String plainCreds = username + ":" + password;

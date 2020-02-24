@@ -81,6 +81,8 @@ dependencies {
 	testCompile("org.springframework.boot:spring-boot-starter:${springBootVersion}")
 	testCompile("org.springframework.boot:spring-boot-starter-amqp:${springBootVersion}")
 	testCompile("org.springframework.boot:spring-boot-test:${springBootVersion}")
+	implementation "org.springframework.cloud:spring-cloud-gcp-storage:1.1.1.RELEASE"
+
 	testCompile("org.springframework.retry:spring-retry:1.2.2.RELEASE")
 	testCompile("org.springframework:spring-web:${springFrameworkVersion}")
 	testCompile("org.springframework:spring-aop:${springFrameworkVersion}")
