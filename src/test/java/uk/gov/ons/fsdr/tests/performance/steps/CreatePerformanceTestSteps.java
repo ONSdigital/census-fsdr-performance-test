@@ -86,9 +86,9 @@ public class CreatePerformanceTestSteps {
     assertThat(hasFileCreated).isTrue();
   }
 
-  @And("details of latency and cucumber report are saved to files")
-  public void detailsOfLatencyAndCucumberReportAreSavedToFiles() {
+  @And("details of latency and cucumber report of {string} employees are saved to files")
+  public void detailsOfLatencyAndCucumberReportAreSavedToFiles(String numOfEmployees) {
     Map<String, String> latencyMap = performanceTestUtils.getLatencyMap();
-    performanceTestUtils.createLatencyReport(latencyMap);
+    performanceTestUtils.createLatencyReport(latencyMap, Integer.parseInt(numOfEmployees));
   }
 }
