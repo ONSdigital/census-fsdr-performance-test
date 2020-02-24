@@ -1,43 +1,54 @@
 buildscript {
-	ext {
-		springBootVersion = '2.1.0.RELEASE'
-		springFrameworkVersion = '5.1.2.RELEASE'
-	}
-	repositories {
-		mavenCentral()
-		jcenter()
-	}
+    ext {
+        springBootVersion = '2.1.0.RELEASE'
+        springFrameworkVersion = '5.1.2.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
 }
 
 plugins {
-	id 'org.springframework.boot' version '2.2.4.RELEASE'
-	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
-	id 'java'
-	id 'eclipse'
-	id 'idea'
+    id 'org.springframework.boot' version '2.2.4.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java'
+    id 'eclipse'
+    id 'idea'
 }
 
 description = 'census-fsdr-performance-tests'
 group = 'uk.gov.ons.fsdr.tests'
-version = '0.0.1-SNAPSHOT'
+version = rootProject.file('version.txt').text.trim()
 sourceCompatibility = 11
 targetCompatibility = 11
 
 repositories {
-	mavenLocal()
-	if (!project.hasProperty('omitSDCArtifactory')) {
-		maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-release' }
-		maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-snapshot' }
-	}
-	mavenCentral()
-	mavenLocal()
+    mavenLocal()
+    maven {
+        url 'https://ons.jfrog.io/ons/libs-releases-virtual'
+        credentials {
+            username "${artifactory_user}"
+            password "${artifactory_password}"
+        }
+    }
+    maven {
+        url 'https://ons.jfrog.io/ons/libs-snapshots-virtual'
+        credentials {
+            username "${artifactory_user}"
+            password "${artifactory_password}"
+        }
+    }
+    //maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-release' }
+    //maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-snapshot' }
+    mavenCentral()
 }
 
 configurations {
-	jaxb
-	cucumberRuntime {
-		extendsFrom testRuntime
-	}
+    jaxb
+    cucumberRuntime {
+        extendsFrom testRuntime
+    }
 }
 
 task cucumber(dependsOn: testClasses) {
@@ -48,54 +59,69 @@ task cucumber(dependsOn: testClasses) {
 			args = ['--plugin', 'pretty', '--glue', 'uk.gov.ons.fsdr.tests.performance.steps', 'src/test/resources']
 		}
 	}
+
 }
 
 test {
-	dependsOn cleanTest
-	testLogging.showStandardStreams = true
-	systemProperties System.getProperties()
-	systemProperties.remove("java.endorsed.dirs")
+    dependsOn cleanTest
+    testLogging.showStandardStreams = true
+    systemProperties System.getProperties()
+    systemProperties.remove("java.endorsed.dirs")
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter'
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation('org.springframework.boot:spring-boot-starter-test') {
-		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-	}
+    implementation 'org.springframework.boot:spring-boot-starter'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
 
-	compile ("org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}")
-	runtimeOnly 'org.postgresql:postgresql:42.2.5'
+    compile("org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}")
+    runtimeOnly('org.postgresql:postgresql:42.2.5')
 
-	compile("uk.gov.ons.census.fwmt:census-fwmt-events:1.0.17-RELEASE")
+
+	compile("uk.gov.ons.census.fwmt:census-fwmt-events:1.0.19-RELEASE")
 	compile("uk.gov.ons:census-fsdr-common:0.0.4-RELEASE")
 	compile("uk.gov.ons.census.ffa:census-ffa-storage-utils:0.0.1-RELEASE")
 
+	compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
+	testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
-	compile("com.google.guava:guava:27.0.1-jre")
 
-	compile("org.projectlombok:lombok:1.18.4")
-	annotationProcessor("org.projectlombok:lombok:1.18.4")
+    compile('com.google.guava:guava:27.0.1-jre')
 
-	testCompile("org.springframework.boot:spring-boot-starter:${springBootVersion}")
-	testCompile("org.springframework.boot:spring-boot-starter-amqp:${springBootVersion}")
-	testCompile("org.springframework.boot:spring-boot-test:${springBootVersion}")
-	implementation "org.springframework.cloud:spring-cloud-gcp-storage:1.1.1.RELEASE"
+    compile('org.projectlombok:lombok:1.18.4')
+    annotationProcessor('org.projectlombok:lombok:1.18.4')
 
-	testCompile("org.springframework.retry:spring-retry:1.2.2.RELEASE")
-	testCompile("org.springframework:spring-web:${springFrameworkVersion}")
-	testCompile("org.springframework:spring-aop:${springFrameworkVersion}")
-	testCompile("com.jcraft:jsch:0.1.54")
+    testCompile("org.springframework.boot:spring-boot-starter:${springBootVersion}")
+    testCompile("org.springframework.boot:spring-boot-starter-amqp:${springBootVersion}")
+    testCompile("org.springframework.boot:spring-boot-test:${springBootVersion}")
+    testCompile("org.springframework.retry:spring-retry:1.2.2.RELEASE")
+    testCompile("org.springframework:spring-web:${springFrameworkVersion}")
+    testCompile("org.springframework:spring-aop:${springFrameworkVersion}")
+    testCompile("org.springframework.cloud:spring-cloud-gcp-storage:1.1.1.RELEASE")
+    testCompile('com.jcraft:jsch:0.1.54')
 
-	compile("org.json:json:20180813")
 
-	testCompile("com.fasterxml.jackson.core:jackson-databind:2.9.7")
-	testCompile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.7")
+    testCompile('org.bouncycastle:bcpg-jdk15on:1.61')
 
-	compile("org.apache.httpcomponents:httpclient:4.5.6")
+    compile('org.json:json:20180813')
+    compile('org.freemarker:freemarker:2.3.28')
 
-	testCompile("org.springframework:spring-test:${springFrameworkVersion}")
+    testCompile('com.fasterxml.jackson.core:jackson-databind:2.9.7')
+    testCompile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.7')
+
+
+    compile('org.apache.httpcomponents:httpclient:4.5.6')
+
+    testCompile("org.springframework:spring-test:${springFrameworkVersion}")
+
+    testCompile('io.cucumber:cucumber-java:4.0.2')
+    testCompile('io.cucumber:cucumber-junit:4.0.2')
+    testCompile('io.cucumber:cucumber-spring:4.0.2')
+    testCompile('org.assertj:assertj-core:3.11.1')
+
 
 	testCompile("io.cucumber:cucumber-java:4.0.2")
 	testCompile("io.cucumber:cucumber-junit:4.0.2")
@@ -106,5 +132,7 @@ dependencies {
 	testAnnotationProcessor("org.projectlombok:lombok:1.18.4")
 
 	testCompile("com.opencsv:opencsv:5.0")
+	compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
+
 
 }

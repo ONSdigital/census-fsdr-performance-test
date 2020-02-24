@@ -21,10 +21,6 @@ public class CreatePerformanceTestSteps {
 
   private static final String FSDR_PROCESS_COMPLETE = "FSDR_PROCESS_COMPLETE";
 
-  private static final String FSDR_REPORT_CREATED = "FSDR_REPORT_CREATED";
-
-  private static final String XMA_PROCESSING_COMPLETE = "XMA_PROCESSING_COMPLETE";
-
   @Autowired
   private PerformanceTestUtils performanceTestUtils;
 
@@ -33,11 +29,18 @@ public class CreatePerformanceTestSteps {
 
   private GatewayEventMonitor gatewayEventMonitor = new GatewayEventMonitor();
 
+  long timeout;
+
   @Before
   public void setup() throws IOException, TimeoutException {
     gatewayEventMonitor.enableEventMonitor();
     performanceTestUtils.clearDown();
     performanceTestUtils.setTimestamp();
+  }
+
+  @After
+  public void stop() {
+    performanceTestUtils.stopScheduler();
   }
 
   @Given("you have {int} FSDRService Pod")
@@ -66,23 +69,21 @@ public class CreatePerformanceTestSteps {
 
   @And("Adecco has sent {string} number of new records")
   public void adeccoHasSentNumberOfNewRecords(String records) throws IOException {
+    timeout = Integer.parseInt(records) * 10000;
     mockUtils.addMultipleAdecco(Integer.parseInt(records));
-    //performanceTestUtils.setupEmployees(Integer.parseInt(records));
   }
 
   @When("confirm FSDR runs and has completed")
   public void confirmFsdrRunsAndHasCompleted() {
     performanceTestUtils.runFsdr();
-   // performanceTestUtils.createDevices();
-    boolean fsdrProcessCompleteHasBeenTriggered = gatewayEventMonitor.hasEventTriggered("<N/A>", FSDR_PROCESS_COMPLETE, 180000L);
+    boolean fsdrProcessCompleteHasBeenTriggered = gatewayEventMonitor.hasEventTriggered("<N/A>", FSDR_PROCESS_COMPLETE, timeout);
     assertThat(fsdrProcessCompleteHasBeenTriggered).isTrue();
   }
 
   @Then("confirm that an FSDR report has been created")
   public void confirmThatAnFsdrReportHasBeenCreated() throws IOException {
-    performanceTestUtils.createFsdrReport();
-    boolean hasBeenTriggered = gatewayEventMonitor.hasEventTriggered("N/A", FSDR_REPORT_CREATED, 10000L);
-    assertThat(hasBeenTriggered).isTrue();
+    Boolean hasFileCreated = performanceTestUtils.createFsdrReport();
+    assertThat(hasFileCreated).isTrue();
   }
 
   @And("details of latency and cucumber report are saved to files")
