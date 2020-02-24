@@ -25,22 +25,22 @@ targetCompatibility = 11
 
 repositories {
     mavenLocal()
-//    maven {
-//        url 'https://ons.jfrog.io/ons/libs-releases-virtual'
-//        credentials {
-//            username "${artifactory_user}"
-//            password "${artifactory_password}"
-//        }
-//    }
-//    maven {
-//        url 'https://ons.jfrog.io/ons/libs-snapshots-virtual'
-//        credentials {
-//            username "${artifactory_user}"
-//            password "${artifactory_password}"
-//        }
-//    }
-    maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-release' }
-    maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-snapshot' }
+    maven {
+        url 'https://ons.jfrog.io/ons/libs-releases-virtual'
+        credentials {
+            username "${artifactory_user}"
+            password "${artifactory_password}"
+        }
+    }
+    maven {
+        url 'https://ons.jfrog.io/ons/libs-snapshots-virtual'
+        credentials {
+            username "${artifactory_user}"
+            password "${artifactory_password}"
+        }
+    }
+//    maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-release' }
+//    maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-snapshot' }
     mavenCentral()
 }
 
@@ -100,7 +100,7 @@ dependencies {
     testCompile("org.springframework.retry:spring-retry:1.2.2.RELEASE")
     testCompile("org.springframework:spring-web:${springFrameworkVersion}")
     testCompile("org.springframework:spring-aop:${springFrameworkVersion}")
-    //implementation("org.springframework.cloud:spring-cloud-gcp-storage:1.1.1.RELEASE")
+    testCompile("org.springframework.cloud:spring-cloud-gcp-storage:1.1.1.RELEASE")
     testCompile('com.jcraft:jsch:0.1.54')
 
 
