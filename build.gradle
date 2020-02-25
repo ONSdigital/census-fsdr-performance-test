@@ -39,8 +39,8 @@ repositories {
             password "${artifactory_password}"
         }
     }
-    //maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-release' }
-    //maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-snapshot' }
+//    maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-release' }
+//    maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-snapshot' }
     mavenCentral()
 }
 
@@ -100,6 +100,7 @@ dependencies {
     testCompile("org.springframework.retry:spring-retry:1.2.2.RELEASE")
     testCompile("org.springframework:spring-web:${springFrameworkVersion}")
     testCompile("org.springframework:spring-aop:${springFrameworkVersion}")
+    testCompile("org.springframework.cloud:spring-cloud-gcp-storage:1.1.1.RELEASE")
     testCompile('com.jcraft:jsch:0.1.54')
 
 

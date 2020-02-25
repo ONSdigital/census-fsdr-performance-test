@@ -3,14 +3,11 @@ package uk.gov.ons.fsdr.tests.performance.utils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import uk.gov.ons.fsdr.common.dto.AdeccoResponse;
-import uk.gov.ons.fsdr.common.dto.AdeccoResponseList;
 import uk.gov.ons.fsdr.tests.performance.exceptions.MockInaccessibleException;
 
 import java.io.IOException;
@@ -20,7 +17,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
 
 @Slf4j
 @Component
@@ -100,13 +96,12 @@ public final class MockUtils {
     }
   }
 
-  public void addUsersAdecco(List<AdeccoResponse> adeccoResponseList) {
+  public void addMultipleAdecco(int number) {
+    String url = baseMockUrl + "mock/postManyResponse/" + number;
     RestTemplate restTemplate = new RestTemplate();
-    HttpHeaders headers = createBasicAuthHeaders(mockUsername, mockPassword);
+    HttpHeaders headers = createBasicAuthHeaders("user", "password");
     headers.setContentType(MediaType.APPLICATION_JSON);
-    HttpEntity<List<AdeccoResponse>> response = new HttpEntity<>(adeccoResponseList, headers);
-    String postUrl = baseMockUrl + "mock/postResponse";
-    restTemplate.exchange(postUrl, HttpMethod.POST, response, AdeccoResponseList.class);
+    restTemplate.exchange(url, HttpMethod.POST, null, String.class);
   }
 
   private HttpHeaders createBasicAuthHeaders(String username, String password) {

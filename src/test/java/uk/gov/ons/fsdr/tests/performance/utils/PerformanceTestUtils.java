@@ -12,9 +12,7 @@ import uk.gov.ons.fsdr.tests.performance.dto.Employee;
 import uk.gov.ons.fsdr.tests.performance.factory.AdeccoEmployeeFactory;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -22,18 +20,12 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Slf4j
 @Component
 public final class PerformanceTestUtils {
-
-  private static List<AdeccoResponse> adeccoResponseList = new ArrayList<>();
-
-  private static List<Device> allocatedDevices = new ArrayList<>();
 
   @Autowired
   private MockUtils mockUtils;
@@ -98,37 +90,7 @@ public final class PerformanceTestUtils {
     return timestamp;
   }
 
-  public void setupEmployees(int numberOfEmployees) throws IOException {
-    List<Employee> employees = getEmployeesFromCsv();
-    List<Device> devices = getDevicesFromCsv();
-
-    int count = 0;
-    for (int i = 0; i < numberOfEmployees; i++) {
-      Device device = devices.get(count);
-      Employee employee = employees.get(count);
-      employee.setUniqueEmployeeId(String.valueOf(UUID.randomUUID()));
-      employee.setRoleId(device.getRoleId());
-      employee.setJobRole(setJobRole(device));
-      AdeccoResponse adeccoResponse = AdeccoEmployeeFactory.buildAdeccoResponse(employee);
-      adeccoResponseList.add(adeccoResponse);
-      allocatedDevices.add(device);
-      count++;
-      if (count == employees.size()) {
-        count = 0;
-      }
-    }
-    log.info("Employees setup: {}", numberOfEmployees);
-    mockUtils.addUsersAdecco(adeccoResponseList);
-  }
-
-  public void createDevices() {
-    for (Device device: allocatedDevices) {
-      xmaMockUtils.postDevice(device.getRoleId(), device.getPhoneNumber(), device.getStatus());
-    }
-    log.info("Devices added to XMA: {}", allocatedDevices.size());
-  }
-
-  public void createLatencyReport(Map<String, String> latencyMap) {
+  public void createLatencyReport(Map<String, String> latencyMap, int numOfEmployees) {
     File file = null;
     try {
       file = File.createTempFile("latency_report-" + getTimestamp(), ".txt");
@@ -136,7 +98,7 @@ public final class PerformanceTestUtils {
     }
     try (Writer writer = new FileWriter(file.getAbsolutePath(), StandardCharsets.UTF_8)) {
       writer.write("Latency Report \n");
-      writer.write(adeccoResponseList.size() + " : Number of Adecco responses \n");
+      writer.write(numOfEmployees + " : Number of Adecco responses \n");
       writer.write("Adecco latency: " + latencyMap.get("adecco") + "ms \n");
       writer.write("Service Now latency: " + latencyMap.get("snow") + "ms \n");
       writer.write("G Suite latency: " + latencyMap.get("gsuite") + "ms \n");
@@ -168,31 +130,5 @@ public final class PerformanceTestUtils {
     return true;
   }
 
-  private List<Device> getDevicesFromCsv() throws IOException {
-    File file = new File(getClass().getClassLoader().getResource("files/csv/device_data.csv").getFile());
-    return (List<Device>) new CsvToBeanBuilder(new FileReader(file))
-        .withType(Device.class)
-        .build()
-        .parse();
-  }
-
-  private List<Employee> getEmployeesFromCsv() throws FileNotFoundException {
-    File file = new File(getClass().getClassLoader().getResource("files/csv/employee_data.csv").getFile());
-    return (List<Employee>) new CsvToBeanBuilder(new FileReader(file))
-        .withType(Employee.class)
-        .build()
-        .parse();
-  }
-
-  private String setJobRole(Device device) {
-    if (device.getRoleId().length() == 10) {
-      return "Field officer";
-    } else if (device.getRoleId().length() == 7) {
-      return "Coordinator";
-    } else if (device.getRoleId().length() == 4) {
-      return "Area Manager";
-    }
-    return null;
-  }
 }
 

@@ -10,7 +10,7 @@ Feature: Create action performance test
     And Adecco has sent "<employees>" number of new records
     When confirm FSDR runs and has completed
     Then confirm that an FSDR report has been created
-    And details of latency and cucumber report are saved to files
+    And details of latency and cucumber report of "<employees>" employees are saved to files
 
     Examples:
       | xmaLatency | adeccoLatency | gsuiteLatency | snowLatency | employees |
