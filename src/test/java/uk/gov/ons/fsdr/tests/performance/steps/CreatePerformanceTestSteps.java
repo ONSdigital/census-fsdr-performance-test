@@ -78,6 +78,8 @@ public class CreatePerformanceTestSteps {
 
   @Then("confirm that an FSDR report has been created")
   public void confirmThatAnFsdrReportHasBeenCreated() throws IOException {
+    boolean fsdrProcessCompleteHasBeenTriggered = gatewayEventMonitor.hasEventTriggered("<N/A>", "FSDR_REPORT_READY", timeout);
+    assertThat(fsdrProcessCompleteHasBeenTriggered).isTrue();
     Boolean hasFileCreated = performanceTestUtils.createFsdrReport();
     assertThat(hasFileCreated).isTrue();
   }
