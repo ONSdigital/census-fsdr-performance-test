@@ -13,6 +13,16 @@ Feature: Create action performance test
     And details of latency and cucumber report of "<employees>" employees are saved to files
 
     Examples:
-      |xmaLatency| adeccoLatency | gsuiteLatency | snowLatency | employees |
-      |      0   |      0        |        0      |      0      |    1      |
- #     |     10   |     10        |       10      |     10      |    1      |
+      |xmaLatency  | adeccoLatency | gsuiteLatency | snowLatency | employees  |
+      |      0     |         0     |           0   |         0   |    40      |
+      |    100     |       100     |         100   |       100   |    40      |
+      |   1000     |      1000     |        1000   |      1000   |    40      |
+      |      0     |         0     |           0   |         0   |    400     |
+      |    100     |       100     |         100   |       100   |    400     |
+      |   1000     |      1000     |        1000   |      1000   |    400     |
+      |      0     |         0     |           0   |         0   |    4000    |
+      |    100     |       100     |         100   |       100   |    4000    |
+      |   1000     |      1000     |        1000   |      1000   |    4000    |
+      |      0     |         0     |           0   |         0   |    40000   |
+      |    100     |       100     |         100   |       100   |    40000   |
+      |   1000     |      1000     |        1000   |      1000   |    40000   |
