@@ -18,6 +18,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import uk.gov.ons.census.fwmt.events.utils.GatewayEventMonitor;
+import uk.gov.ons.fsdr.tests.performance.utils.MockUtils;
 import uk.gov.ons.fsdr.tests.performance.utils.PerformanceTestUtils;
 
 public class CreatePerformanceTestSteps {
@@ -41,6 +42,9 @@ public class CreatePerformanceTestSteps {
 
   @Autowired
   private PerformanceTestUtils performanceTestUtils;
+
+  @Autowired
+  private MockUtils mockUtils;
 
   private GatewayEventMonitor gatewayEventMonitor = new GatewayEventMonitor();
 
@@ -86,7 +90,7 @@ public class CreatePerformanceTestSteps {
   @And("Adecco has sent {string} number of new records")
   public void adeccoHasSentNumberOfNewRecords(String records) throws IOException {
     timeout = Integer.parseInt(records) * 10000;
-    performanceTestUtils.setupEmployees(Integer.parseInt(records));
+    mockUtils.addMultipleAdecco(Integer.parseInt(records));
   }
 
   @When("confirm FSDR runs and has completed")
@@ -98,13 +102,15 @@ public class CreatePerformanceTestSteps {
 
   @Then("confirm that an FSDR report has been created")
   public void confirmThatAnFsdrReportHasBeenCreated() throws IOException {
+    boolean fsdrProcessCompleteHasBeenTriggered = gatewayEventMonitor.hasEventTriggered("<N/A>", "FSDR_REPORT_READY", timeout);
+    assertThat(fsdrProcessCompleteHasBeenTriggered).isTrue();
     Boolean hasFileCreated = performanceTestUtils.createFsdrReport();
     assertThat(hasFileCreated).isTrue();
   }
 
-  @And("details of latency and cucumber report are saved to files")
-  public void detailsOfLatencyAndCucumberReportAreSavedToFiles() {
+  @And("details of latency and cucumber report of {string} employees are saved to files")
+  public void detailsOfLatencyAndCucumberReportAreSavedToFiles(String numOfEmployees) {
     Map<String, String> latencyMap = performanceTestUtils.getLatencyMap();
-    performanceTestUtils.createLatencyReport(latencyMap);
+    performanceTestUtils.createLatencyReport(latencyMap, Integer.parseInt(numOfEmployees));
   }
 }
