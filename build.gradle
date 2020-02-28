@@ -41,8 +41,6 @@ repositories {
         }
     }
 
-    //maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-release' }
-    //maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-snapshot' }
     mavenCentral()
 }
 
@@ -54,13 +52,14 @@ configurations {
 }
 
 task cucumber(dependsOn: testClasses) {
-    doLast {
-        javaexec {
-            main = 'cucumber.api.cli.Main'
-            classpath = configurations.testRuntimeClasspath + sourceSets.main.output + sourceSets.test.output
-            args = ['--plugin', 'pretty', '--glue', 'uk.gov.ons.census-fsdr-acceptance-tests', 'src/test/resources']
-        }
-    }
+	doLast {
+		javaexec {
+			main = 'cucumber.api.cli.Main'
+			classpath = configurations.testRuntimeClasspath + sourceSets.main.output + sourceSets.test.output
+			args = ['--plugin', 'pretty', '--glue', 'uk.gov.ons.fsdr.tests.performance.steps', 'src/test/resources']
+		}
+	}
+
 }
 
 test {
@@ -81,8 +80,12 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}")
     runtimeOnly('org.postgresql:postgresql:42.2.5')
 
-    compile('uk.gov.ons.census.fwmt:census-fwmt-events:1.0.21-RELEASE')
-    compile('uk.gov.ons:census-fsdr-common:0.0.6-RELEASE')
+    compile("uk.gov.ons.census.fwmt:census-fwmt-events:1.0.22-SNAPSHOT")
+    compile("uk.gov.ons:census-fsdr-common:0.0.6-RELEASE")
+    compile("uk.gov.ons.census.ffa:census-ffa-storage-utils:0.0.1-RELEASE")
+
+    compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
+    testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
     compile('com.google.guava:guava:27.0.1-jre')
 
@@ -95,6 +98,7 @@ dependencies {
     testCompile("org.springframework.retry:spring-retry:1.2.2.RELEASE")
     testCompile("org.springframework:spring-web:${springFrameworkVersion}")
     testCompile("org.springframework:spring-aop:${springFrameworkVersion}")
+    testCompile("org.springframework.cloud:spring-cloud-gcp-storage:1.1.1.RELEASE")
     testCompile('com.jcraft:jsch:0.1.54')
 
     testCompile('org.bouncycastle:bcpg-jdk15on:1.61')
@@ -114,6 +118,14 @@ dependencies {
     testCompile('io.cucumber:cucumber-spring:4.0.2')
     testCompile('org.assertj:assertj-core:3.11.1')
 
-    testCompile('org.projectlombok:lombok:1.18.4')
-    testAnnotationProcessor('org.projectlombok:lombok:1.18.4')
+	testCompile("io.cucumber:cucumber-java:4.0.2")
+	testCompile("io.cucumber:cucumber-junit:4.0.2")
+	testCompile("io.cucumber:cucumber-spring:4.0.2")
+	testCompile("org.assertj:assertj-core:3.11.1")
+
+	testCompile("org.projectlombok:lombok:1.18.4")
+	testAnnotationProcessor("org.projectlombok:lombok:1.18.4")
+
+	testCompile("com.opencsv:opencsv:5.0")
+	compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
 }
