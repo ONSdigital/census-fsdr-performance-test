@@ -23,6 +23,8 @@ import uk.gov.ons.fsdr.tests.performance.utils.PerformanceTestUtils;
 
 public class CreatePerformanceTestSteps {
 
+  private static final String FSDR_REPORT_READY = "FSDR_REPORT_READY";
+
   private static final String FSDR_PROCESS_COMPLETE = "FSDR_PROCESS_COMPLETE";
 
   private static final String FSDR_REPORT_CREATED = "FSDR_REPORT_CREATED";
@@ -52,7 +54,7 @@ public class CreatePerformanceTestSteps {
 
   @Before
   public void setup() throws IOException, TimeoutException {
-    List<String> eventsToListen = Arrays.asList(new String[]{FSDR_PROCESS_COMPLETE, FSDR_REPORT_CREATED});
+    List<String> eventsToListen = Arrays.asList(new String[]{FSDR_PROCESS_COMPLETE, FSDR_REPORT_CREATED, FSDR_REPORT_READY});
     gatewayEventMonitor.enableEventMonitor(rabbitLocation, rabbitUsername, rabbitPassword, rabbitPort, eventsToListen);
     performanceTestUtils.clearDown();
     performanceTestUtils.setTimestamp();
@@ -102,7 +104,7 @@ public class CreatePerformanceTestSteps {
 
   @Then("confirm that an FSDR report has been created")
   public void confirmThatAnFsdrReportHasBeenCreated() throws IOException {
-    boolean fsdrProcessCompleteHasBeenTriggered = gatewayEventMonitor.hasEventTriggered("<N/A>", "FSDR_REPORT_READY", timeout);
+    boolean fsdrProcessCompleteHasBeenTriggered = gatewayEventMonitor.hasEventTriggered("<N/A>", FSDR_REPORT_READY, timeout);
     assertThat(fsdrProcessCompleteHasBeenTriggered).isTrue();
     Boolean hasFileCreated = performanceTestUtils.createFsdrReport();
     assertThat(hasFileCreated).isTrue();
