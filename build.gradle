@@ -25,6 +25,7 @@ targetCompatibility = 11
 
 repositories {
     mavenLocal()
+
     maven {
         url 'https://ons.jfrog.io/ons/libs-releases-virtual'
         credentials {
@@ -39,8 +40,7 @@ repositories {
             password "${artifactory_password}"
         }
     }
-//    maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-release' }
-//    maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-snapshot' }
+
     mavenCentral()
 }
 
@@ -80,14 +80,12 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}")
     runtimeOnly('org.postgresql:postgresql:42.2.5')
 
-
-	compile("uk.gov.ons.census.fwmt:census-fwmt-events:1.0.20-SNAPSHOT")
-	compile("uk.gov.ons:census-fsdr-common:0.0.4-RELEASE")
+	compile("uk.gov.ons.census.fwmt:census-fwmt-events:1.0.21-SNAPSHOT")
+	compile("uk.gov.ons:census-fsdr-common:0.0.6-RELEASE")
 	compile("uk.gov.ons.census.ffa:census-ffa-storage-utils:0.0.1-RELEASE")
 
 	compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
 	testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
-
 
     compile('com.google.guava:guava:27.0.1-jre')
 
@@ -103,7 +101,6 @@ dependencies {
     testCompile("org.springframework.cloud:spring-cloud-gcp-storage:1.1.1.RELEASE")
     testCompile('com.jcraft:jsch:0.1.54')
 
-
     testCompile('org.bouncycastle:bcpg-jdk15on:1.61')
 
     compile('org.json:json:20180813')
@@ -111,7 +108,6 @@ dependencies {
 
     testCompile('com.fasterxml.jackson.core:jackson-databind:2.9.7')
     testCompile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.7')
-
 
     compile('org.apache.httpcomponents:httpclient:4.5.6')
 
