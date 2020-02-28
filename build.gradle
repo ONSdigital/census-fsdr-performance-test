@@ -25,6 +25,7 @@ targetCompatibility = 11
 
 repositories {
     mavenLocal()
+
     maven {
         url 'https://ons.jfrog.io/ons/libs-releases-virtual'
         credentials {
@@ -39,6 +40,7 @@ repositories {
             password "${artifactory_password}"
         }
     }
+
 //    maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-release' }
 //    maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-snapshot' }
     mavenCentral()
@@ -87,7 +89,6 @@ dependencies {
 
 	compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
 	testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
-
 
     compile('com.google.guava:guava:27.0.1-jre')
 
