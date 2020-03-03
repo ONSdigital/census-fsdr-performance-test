@@ -108,7 +108,7 @@ public final class PerformanceTestUtils {
     } catch (IOException ignored) {
     }
     storageUtils.move(file.toURI(), URI.create(reportDestination + "/" + dayFolderName + "/" + timeFolderName + "/"
-        + "latency_report_" + reportPrefix + ".txt"));
+        + reportPrefix + "_latency_report" + ".txt"));
     file.deleteOnExit();
   }
 
@@ -122,7 +122,7 @@ public final class PerformanceTestUtils {
       return false;
     }
     storageUtils.move(file.toURI(), URI.create(
-        reportDestination + "/" + dayFolderName + "/" + timeFolderName + "/" + "fsdr_report_" + reportPrefix + ".csv"));
+        reportDestination + "/" + dayFolderName + "/" + timeFolderName + "/" + reportPrefix+ "_fsdr_report"  + ".csv"));
     file.deleteOnExit();
     return true;
   }
