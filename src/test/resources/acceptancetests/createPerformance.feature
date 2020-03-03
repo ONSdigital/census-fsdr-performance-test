@@ -8,21 +8,22 @@ Feature: Create action performance test
     And the latency on adecco mock is "<adeccoLatency>" ms
     And the latency on xma mock is "<xmaLatency>" ms
     And Adecco has sent "<employees>" number of new records
-    When confirm FSDR runs and has completed
-    Then confirm that an FSDR report has been created
-    And details of latency and cucumber report of "<employees>" employees are saved to files
+    When FSDR runs
+    And has completed
+    Then create "<reportPrefix>" FSDR report with "<employees>" employers
 
     Examples:
-      |xmaLatency  | adeccoLatency | gsuiteLatency | snowLatency | employees  |
-      |      0     |         0     |           0   |         0   |    40      |
-#      |    100     |       100     |         100   |       100   |    40      |
-#      |   1000     |      1000     |        1000   |      1000   |    40      |
-#      |      0     |         0     |           0   |         0   |    400     |
-#      |    100     |       100     |         100   |       100   |    400     |
-#      |   1000     |      1000     |        1000   |      1000   |    400     |
-#      |      0     |         0     |           0   |         0   |    4000    |
-#      |    100     |       100     |         100   |       100   |    4000    |
-#      |   1000     |      1000     |        1000   |      1000   |    4000    |
-      |      0     |         0     |           0   |         0   |    40000   |
-#      |    100     |       100     |         100   |       100   |    40000   |
-#      |   1000     |      1000     |        1000   |      1000   |    40000   |
+      | reportPrefix   | xmaLatency  | adeccoLatency | gsuiteLatency | snowLatency | employees  |
+      | 0l_40emp       |       0     |         0     |           0   |         0   |    40      |
+#      | 10l_40emp      |     100     |       100     |         100   |       100   |    40      |
+#      | 1000l_40emp    |    1000     |      1000     |        1000   |      1000   |    40      |
+#      | 0l_400emp      |       0     |         0     |           0   |         0   |    400     |
+#      | 10l_400emp     |     100     |       100     |         100   |       100   |    400     |
+#      | 1000l_400emp   |    1000     |      1000     |        1000   |      1000   |    400     |
+#      | 0l_4000emp     |       0     |         0     |           0   |         0   |    4000    |
+#      | 10l_4000emp    |     100     |       100     |         100   |       100   |    4000    |
+#      | 1000l_4000emp  |    1000     |      1000     |        1000   |      1000   |    4000    |
+#      | 0l_40000emp    |       0     |         0     |           0   |         0   |    40000   |
+#      | 10l_40000emp   |     100     |       100     |         100   |       100   |    40000   |
+#      | 1000l_40000emp |    1000     |      1000     |        1000   |      1000   |    40000   |
+

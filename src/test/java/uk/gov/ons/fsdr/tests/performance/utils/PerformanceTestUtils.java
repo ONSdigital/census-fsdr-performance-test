@@ -1,16 +1,5 @@
 package uk.gov.ons.fsdr.tests.performance.utils;
 
-import com.opencsv.bean.CsvToBeanBuilder;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import uk.gov.census.ffa.storage.utils.StorageUtils;
-import uk.gov.ons.fsdr.common.dto.AdeccoResponse;
-import uk.gov.ons.fsdr.tests.performance.dto.Device;
-import uk.gov.ons.fsdr.tests.performance.dto.Employee;
-import uk.gov.ons.fsdr.tests.performance.factory.AdeccoEmployeeFactory;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -18,10 +7,19 @@ import java.io.IOException;
 import java.io.Writer;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import lombok.extern.slf4j.Slf4j;
+import uk.gov.census.ffa.storage.utils.StorageUtils;
 
 @Slf4j
 @Component
@@ -50,7 +48,11 @@ public final class PerformanceTestUtils {
 
   private Map<String, String> latencyMap;
 
-  private String timestamp;
+  private static String dayFolderName;
+  private static String timeFolderName;
+
+  private final static DateTimeFormatter dayFolderFmt = DateTimeFormatter.ofPattern("yyyMMdd");
+  private final static DateTimeFormatter timeFolderFmt = DateTimeFormatter.ofPattern("HHmm");
 
   public PerformanceTestUtils(Map<String, String> latencyMap) {
     this.latencyMap = latencyMap;
@@ -65,11 +67,12 @@ public final class PerformanceTestUtils {
     return latencyMap;
   }
 
-  public void clearDown() throws IOException {
+  public void clearDown() throws Exception {
     mockUtils.clearDatabase();
     mockUtils.clearMock();
     queueClient.clearQueues();
     xmaMockUtils.clearMock();
+    reportUtils.clearReportDatabase();
   }
 
   public void stopScheduler() {
@@ -80,22 +83,21 @@ public final class PerformanceTestUtils {
     fsdrUtils.startFsdr();
   }
 
-  public void setTimestamp() {
-    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyMMddHmmss");
-    LocalDateTime now = LocalDateTime.now();
-    timestamp = dateTimeFormatter.format(now);
+  public void setReportDestination() {
+    if (dayFolderName == null) {
+      LocalDateTime now = LocalDateTime.now();
+      dayFolderName = dayFolderFmt.format(now);
+      timeFolderName = timeFolderFmt.format(now);
+    }
   }
 
-  public String getTimestamp() {
-    return timestamp;
-  }
-
-  public void createLatencyReport(Map<String, String> latencyMap, int numOfEmployees) {
+  public void createLatencyReport(String reportPrefix, int numOfEmployees) {
     File file = null;
     try {
-      file = File.createTempFile("latency_report-" + getTimestamp(), ".txt");
+      file = File.createTempFile("latency_report-" + UUID.randomUUID(), ".txt");
     } catch (IOException ignored) {
     }
+
     try (Writer writer = new FileWriter(file.getAbsolutePath(), StandardCharsets.UTF_8)) {
       writer.write("Latency Report \n");
       writer.write(numOfEmployees + " : Number of Adecco responses \n");
@@ -105,30 +107,24 @@ public final class PerformanceTestUtils {
       writer.write("XMA latency: " + latencyMap.get("xma") + "ms \n");
     } catch (IOException ignored) {
     }
-    storageUtils.move(file.toURI(), URI.create(reportDestination + "/" + getTimestamp() + "/" + file.getName()));
+    storageUtils.move(file.toURI(), URI.create(reportDestination + "/" + dayFolderName + "/" + timeFolderName + "/"
+        + reportPrefix + "_latency_report" + ".txt"));
     file.deleteOnExit();
   }
 
-  public void createCucumberReports() {
-    List<URI> cucumberReportFileList = storageUtils.getFilenamesInFolder(URI.create("files/report"));
-    for (URI uri : cucumberReportFileList) {
-      storageUtils.move(uri, URI.create(reportDestination + getTimestamp() + "/"));
-    }
-  }
-
-  public boolean createFsdrReport() throws IOException {
+  public boolean createFsdrReport(String reportPrefix) throws IOException {
     byte[] csv = reportUtils.createCsv();
-    File file = File.createTempFile("fsdr_report-" + getTimestamp(), ".csv");
+    File file = File.createTempFile("fsdr_report-" + UUID.randomUUID(), ".csv");
     try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
       fileOutputStream.write(csv);
-    } catch (IOException ignored) {
+    } catch (IOException e) {
+      log.error("Problem creating Performance Report", e);
       return false;
     }
-    storageUtils.move(file.toURI(), URI.create(reportDestination + "/" + getTimestamp() + "/" + file.getName()));
+    storageUtils.move(file.toURI(), URI.create(
+        reportDestination + "/" + dayFolderName + "/" + timeFolderName + "/" + reportPrefix+ "_fsdr_report"  + ".csv"));
     file.deleteOnExit();
-    reportUtils.clearReportDatabase();
     return true;
   }
 
 }
-
