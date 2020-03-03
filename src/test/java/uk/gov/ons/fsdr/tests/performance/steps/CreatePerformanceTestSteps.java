@@ -5,10 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeoutException;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -53,13 +50,10 @@ public class CreatePerformanceTestSteps {
 
   long timeout;
 
-  @BeforeAll
-  public void beforeAll() throws IOException, TimeoutException {
-    performanceTestUtils.setReportDestination();
-  }
-
   @Before
   public void setup() throws Exception {
+    performanceTestUtils.setReportDestination();
+
     List<String> eventsToListen = Arrays.asList(new String[]{FSDR_PROCESS_COMPLETE, FSDR_REPORT_CREATED, FSDR_REPORT_READY});
     gatewayEventMonitor.enableEventMonitor(rabbitLocation, rabbitUsername, rabbitPassword, rabbitPort, eventsToListen);
     performanceTestUtils.clearDown();
@@ -110,8 +104,7 @@ public class CreatePerformanceTestSteps {
     boolean fsdrProcessCompleteHasBeenTriggered = gatewayEventMonitor.hasEventTriggered("<N/A>", FSDR_PROCESS_COMPLETE, timeout);
     assertThat(fsdrProcessCompleteHasBeenTriggered).isTrue();
   }
-
-  @Then("create {string} FSDR report")
+  @Then("create {string} FSDR report with {string} employers")
   public void create_FSDR_report(String reportPrefix, String numOfEmployees) throws IOException {
     boolean fsdrProcessCompleteHasBeenTriggered = gatewayEventMonitor.hasEventTriggered("<N/A>", FSDR_REPORT_READY, timeout);
     assertThat(fsdrProcessCompleteHasBeenTriggered).isTrue();

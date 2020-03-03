@@ -48,12 +48,11 @@ public final class PerformanceTestUtils {
 
   private Map<String, String> latencyMap;
 
-  private String dayFolderName;
-  private String timeFolderName;
+  private static String dayFolderName;
+  private static String timeFolderName;
 
   private final static DateTimeFormatter dayFolderFmt = DateTimeFormatter.ofPattern("yyyMMdd");
   private final static DateTimeFormatter timeFolderFmt = DateTimeFormatter.ofPattern("HHmm");
-
 
   public PerformanceTestUtils(Map<String, String> latencyMap) {
     this.latencyMap = latencyMap;
@@ -73,6 +72,7 @@ public final class PerformanceTestUtils {
     mockUtils.clearMock();
     queueClient.clearQueues();
     xmaMockUtils.clearMock();
+    reportUtils.clearReportDatabase();
   }
 
   public void stopScheduler() {
@@ -84,9 +84,11 @@ public final class PerformanceTestUtils {
   }
 
   public void setReportDestination() {
-    LocalDateTime now = LocalDateTime.now();
-    dayFolderName = dayFolderFmt.format(now);
-    timeFolderName = timeFolderFmt.format(now);
+    if (dayFolderName == null) {
+      LocalDateTime now = LocalDateTime.now();
+      dayFolderName = dayFolderFmt.format(now);
+      timeFolderName = timeFolderFmt.format(now);
+    }
   }
 
   public void createLatencyReport(String reportPrefix, int numOfEmployees) {
@@ -95,7 +97,6 @@ public final class PerformanceTestUtils {
       file = File.createTempFile("latency_report-" + UUID.randomUUID(), ".txt");
     } catch (IOException ignored) {
     }
-
 
     try (Writer writer = new FileWriter(file.getAbsolutePath(), StandardCharsets.UTF_8)) {
       writer.write("Latency Report \n");
@@ -106,7 +107,8 @@ public final class PerformanceTestUtils {
       writer.write("XMA latency: " + latencyMap.get("xma") + "ms \n");
     } catch (IOException ignored) {
     }
-    storageUtils.move(file.toURI(), URI.create(reportDestination + "/" + dayFolderName + "/" + timeFolderName + "/" + "latency_report_"+ reportPrefix + ".txt"));
+    storageUtils.move(file.toURI(), URI.create(reportDestination + "/" + dayFolderName + "/" + timeFolderName + "/"
+        + "latency_report_" + reportPrefix + ".txt"));
     file.deleteOnExit();
   }
 
@@ -119,11 +121,10 @@ public final class PerformanceTestUtils {
       log.error("Problem creating Performance Report", e);
       return false;
     }
-    storageUtils.move(file.toURI(), URI.create(reportDestination + "/" + dayFolderName + "/" + timeFolderName + "/" + "fsdr_report_" + reportPrefix + ".csv"));
+    storageUtils.move(file.toURI(), URI.create(
+        reportDestination + "/" + dayFolderName + "/" + timeFolderName + "/" + "fsdr_report_" + reportPrefix + ".csv"));
     file.deleteOnExit();
-    reportUtils.clearReportDatabase();
     return true;
   }
 
 }
-

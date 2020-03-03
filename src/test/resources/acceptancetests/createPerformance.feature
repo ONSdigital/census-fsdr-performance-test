@@ -10,7 +10,7 @@ Feature: Create action performance test
     And Adecco has sent "<employees>" number of new records
     When FSDR runs
     And has completed
-    Then create "<reportPrefix>" FSDR report
+    Then create "<reportPrefix>" FSDR report with "<employees>" employers
 
     Examples:
       | reportPrefix   | xmaLatency  | adeccoLatency | gsuiteLatency | snowLatency | employees  |
