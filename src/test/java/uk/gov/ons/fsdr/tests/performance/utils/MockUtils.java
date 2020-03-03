@@ -58,7 +58,7 @@ public final class MockUtils {
     restTemplate.exchange(url, HttpMethod.PUT, null, String.class);
   }
 
-  public void clearDatabase() {
+  public void clearDatabase() throws SQLException {
     Statement stmt = null;
     try (Connection conn = DriverManager.getConnection(url, username, password)) {
       if (conn != null) {
@@ -86,7 +86,6 @@ public final class MockUtils {
       } else {
         log.error("Failed to make connection!");
       }
-    } catch (SQLException ignored) {
     } finally {
       try {
         if (stmt != null)

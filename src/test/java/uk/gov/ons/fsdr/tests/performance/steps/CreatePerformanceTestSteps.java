@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -52,12 +53,16 @@ public class CreatePerformanceTestSteps {
 
   long timeout;
 
+  @BeforeAll
+  public void beforeAll() throws IOException, TimeoutException {
+    performanceTestUtils.setReportDestination();
+  }
+
   @Before
-  public void setup() throws IOException, TimeoutException {
+  public void setup() throws Exception {
     List<String> eventsToListen = Arrays.asList(new String[]{FSDR_PROCESS_COMPLETE, FSDR_REPORT_CREATED, FSDR_REPORT_READY});
     gatewayEventMonitor.enableEventMonitor(rabbitLocation, rabbitUsername, rabbitPassword, rabbitPort, eventsToListen);
     performanceTestUtils.clearDown();
-    performanceTestUtils.setTimestamp();
   }
 
   @After
@@ -95,24 +100,33 @@ public class CreatePerformanceTestSteps {
     mockUtils.addMultipleAdecco(Integer.parseInt(records));
   }
 
-  @When("confirm FSDR runs and has completed")
-  public void confirmFsdrRunsAndHasCompleted() {
+  @When("FSDR runs")
+  public void confirm_FSDR_runs() {
     performanceTestUtils.runFsdr();
+  }
+
+  @When("has completed")
+  public void has_completed() {
     boolean fsdrProcessCompleteHasBeenTriggered = gatewayEventMonitor.hasEventTriggered("<N/A>", FSDR_PROCESS_COMPLETE, timeout);
     assertThat(fsdrProcessCompleteHasBeenTriggered).isTrue();
   }
 
-  @Then("confirm that an FSDR report has been created")
-  public void confirmThatAnFsdrReportHasBeenCreated() throws IOException {
+  @Then("create {string} FSDR report")
+  public void create_FSDR_report(String reportPrefix, String numOfEmployees) throws IOException {
     boolean fsdrProcessCompleteHasBeenTriggered = gatewayEventMonitor.hasEventTriggered("<N/A>", FSDR_REPORT_READY, timeout);
     assertThat(fsdrProcessCompleteHasBeenTriggered).isTrue();
-    Boolean hasFileCreated = performanceTestUtils.createFsdrReport();
+    Boolean hasFileCreated = performanceTestUtils.createFsdrReport(reportPrefix);
     assertThat(hasFileCreated).isTrue();
+
+    performanceTestUtils.createLatencyReport(reportPrefix, Integer.parseInt(numOfEmployees));
+  }
+
+
+  @Then("confirm that an FSDR report has been created")
+  public void confirmThatAnFsdrReportHasBeenCreated() throws IOException {
   }
 
   @And("details of latency and cucumber report of {string} employees are saved to files")
-  public void detailsOfLatencyAndCucumberReportAreSavedToFiles(String numOfEmployees) {
-    Map<String, String> latencyMap = performanceTestUtils.getLatencyMap();
-    performanceTestUtils.createLatencyReport(latencyMap, Integer.parseInt(numOfEmployees));
+  public void detailsOfLatencyAndCucumberReportAreSavedToFiles() {
   }
 }
