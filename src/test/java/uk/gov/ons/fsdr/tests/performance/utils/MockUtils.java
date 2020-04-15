@@ -86,7 +86,12 @@ public final class MockUtils {
         stmt.executeUpdate(sql);
         sql = "DELETE FROM gsuite ";
         stmt.executeUpdate(sql);
-
+        sql = "DELETE FROM service_now ";
+        stmt.executeUpdate(sql);
+        sql = "DELETE FROM lws ";
+        stmt.executeUpdate(sql);
+        sql = "DELETE FROM xma ";
+        stmt.executeUpdate(sql);
       } else {
         log.error("Failed to make connection!");
       }
