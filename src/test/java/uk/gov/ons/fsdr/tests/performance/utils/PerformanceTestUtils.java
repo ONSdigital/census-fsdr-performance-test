@@ -68,9 +68,9 @@ public final class PerformanceTestUtils {
   }
 
   public void clearDown() throws Exception {
+    queueClient.clearQueues();
     mockUtils.clearDatabase();
     mockUtils.clearMock();
-    queueClient.clearQueues();
     xmaMockUtils.clearMock();
     reportUtils.clearReportDatabase();
   }
@@ -113,6 +113,8 @@ public final class PerformanceTestUtils {
   }
 
   public boolean createFsdrReport(String reportPrefix) throws IOException {
+    log.info("======================BUILDING CSV======================");
+    log.info("======================BUILDING CSV======================");
     byte[] csv = reportUtils.createCsv();
     File file = File.createTempFile("fsdr_report-" + UUID.randomUUID(), ".csv");
     try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
@@ -121,8 +123,10 @@ public final class PerformanceTestUtils {
       log.error("Problem creating Performance Report", e);
       return false;
     }
-    storageUtils.move(file.toURI(), URI.create(
-        reportDestination + "/" + dayFolderName + "/" + timeFolderName + "/" + reportPrefix+ "_fsdr_report"  + ".csv"));
+
+    String fileDestination = reportDestination + "/" + dayFolderName + "/" + timeFolderName + "/" + reportPrefix+ "_fsdr_report"  + ".csv";
+    storageUtils.move(file.toURI(), URI.create(fileDestination));
+    log.info("file create: {}", fileDestination);
     file.deleteOnExit();
     return true;
   }
