@@ -60,8 +60,9 @@ public class CreatePerformanceTestSteps {
   }
 
   @After
-  public void stop() {
+  public void stop() throws Exception {
     performanceTestUtils.stopScheduler();
+    performanceTestUtils.clearDown();
   }
 
   @Given("you have {int} FSDRService Pod")
