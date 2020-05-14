@@ -81,7 +81,7 @@ dependencies {
     runtimeOnly('org.postgresql:postgresql:42.2.5')
 
     compile("uk.gov.ons.census.fwmt:census-fwmt-events:1.0.22-RELEASE")
-    compile("uk.gov.ons:census-fsdr-common:0.0.6-RELEASE")
+    compile("uk.gov.ons:census-fsdr-common:0.0.8-RELEASE")
     compile("uk.gov.ons.census.ffa:census-ffa-storage-utils:0.0.1-RELEASE")
 
     compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
