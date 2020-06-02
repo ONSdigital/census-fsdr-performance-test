@@ -39,11 +39,11 @@ public class QueueUtils {
 
       return true;
     } catch (IOException | TimeoutException e) {
-      log.error("Issue deleting message from {} queue.", e, qname);
+      log.error("Issue deleting message from {} queue.", qname, e);
       return false;
     } finally {
       try {
-        if (channel != null)
+        if (channel != null && channel.isOpen())
           channel.close();
         if (connection != null)
           connection.close();
