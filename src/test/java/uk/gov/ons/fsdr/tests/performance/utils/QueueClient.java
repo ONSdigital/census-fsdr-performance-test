@@ -23,17 +23,17 @@ public final class QueueClient {
     clearQueue("Gsuite.ActionDLQ");
     clearQueue("Lws.Action");
     clearQueue("Lws.ActionDLQ");
-    clearQueue("Snow.Action");
-    clearQueue("Snow.Events");
-    clearQueue("Snow.Leaver");
-    clearQueue("Snow.Mover");
+    clearQueue("ServiceNow.Action");
+    clearQueue("ServiceNow.Events");
+    clearQueue("ServiceNow.Leaver");
+    clearQueue("ServiceNow.Mover");
     clearQueue("Xma.AreaManager");
     clearQueue("Xma.Coordiantor");
     clearQueue("Xma.Events");
     clearQueue("Xma.FieldOfficer");
     clearQueue("Xma.Leaver");
     clearQueue("xma.transient.error");
-    clearQueue("snow.transient.error");
+    clearQueue("servicenow.transient.error");
     clearQueue("report.events");
   }
 

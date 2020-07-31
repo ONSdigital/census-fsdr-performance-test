@@ -68,8 +68,6 @@ public final class MockUtils {
         stmt.executeUpdate(sql);
         sql = "DELETE FROM device ";
         stmt.executeUpdate(sql);
-        sql = "DELETE FROM device_history ";
-        stmt.executeUpdate(sql);
         sql = "DELETE FROM job_role ";
         stmt.executeUpdate(sql);
         sql = "DELETE FROM job_role_history ";
