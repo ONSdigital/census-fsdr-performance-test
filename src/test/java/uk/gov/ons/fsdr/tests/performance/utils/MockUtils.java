@@ -82,13 +82,13 @@ public final class MockUtils {
         stmt.executeUpdate(sql);
         sql = "DELETE FROM update_state ";
         stmt.executeUpdate(sql);
-        sql = "DELETE FROM gsuite ";
+        sql = "DELETE FROM gsuite.gsuite ";
         stmt.executeUpdate(sql);
-        sql = "DELETE FROM service_now ";
+        sql = "DELETE FROM service_now.service_now ";
         stmt.executeUpdate(sql);
-        sql = "DELETE FROM lws ";
+        sql = "DELETE FROM lws.lws ";
         stmt.executeUpdate(sql);
-        sql = "DELETE FROM xma ";
+        sql = "DELETE FROM xma.xma ";
         stmt.executeUpdate(sql);
       } else {
         log.error("Failed to make connection!");
