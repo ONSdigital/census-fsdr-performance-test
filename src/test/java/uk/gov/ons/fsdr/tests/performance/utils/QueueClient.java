@@ -16,25 +16,25 @@ public final class QueueClient {
     clearQueue("Action.ResultDLQ");
     clearQueue("Adecco.Action");
     clearQueue("Adecco.ActionDLQ");
-    clearQueue("Adecco.Events");
-    clearQueue("FSDR.Events");
-    clearQueue("FSDR.EventsDLQ");
     clearQueue("Gsuite.Action");
     clearQueue("Gsuite.ActionDLQ");
     clearQueue("Lws.Action");
     clearQueue("Lws.ActionDLQ");
     clearQueue("ServiceNow.Action");
-    clearQueue("ServiceNow.Events");
     clearQueue("ServiceNow.Leaver");
     clearQueue("ServiceNow.Mover");
     clearQueue("Xma.AreaManager");
     clearQueue("Xma.Coordiantor");
-    clearQueue("Xma.Events");
     clearQueue("Xma.FieldOfficer");
     clearQueue("Xma.Leaver");
-    clearQueue("xma.transient.error");
-    clearQueue("servicenow.transient.error");
-    clearQueue("report.events");
+    clearQueue("Xma.Transient.Error");
+    clearQueue("Servicenow.Transient.Error");
+
+    clearQueue("FSDR.Events");
+    clearQueue("ServiceNow.Events");
+    clearQueue("Xma.Events");
+    clearQueue("Report.Events");
+    clearQueue("Gsuite.Events");  
   }
 
   private void clearQueue(String queueName) {

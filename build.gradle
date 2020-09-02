@@ -80,7 +80,10 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}")
     runtimeOnly('org.postgresql:postgresql:42.2.5')
 
-    compile("uk.gov.ons.census.fwmt:census-fwmt-events:1.0.22-RELEASE")
+    compile('uk.gov.ons.census.ffa:census-ffa-events:1.0.0-SNAPSHOT') {
+        exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-xml'
+    }
+
     compile("uk.gov.ons:census-fsdr-common:0.0.8-RELEASE")
     compile("uk.gov.ons.census.ffa:census-ffa-storage-utils:0.0.1-RELEASE")
 
