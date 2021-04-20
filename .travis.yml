@@ -1,11 +1,14 @@
 language: java
 jdk: openjdk11
+before_install:
+  - echo "artifactory_user=${ARTIFACTORY_USERNAME}" >> ~/.gradle/gradle.properties
+  - echo "artifactory_password=${ARTIFACTORY_PASSWORD}" >> ~/.gradle/gradle.properties
+
 services:
 - docker
 install: true
 script:
-  - sleep 60
-  - ./gradlew testClasses --info;
+  - ./gradlew testClasses --info --refresh-dependencies;
 env:
   global:
   - SPRING_PROFILES_ACTIVE=default,integration-tests
